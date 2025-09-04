@@ -1,0 +1,1 @@
+alert("🚨 MIME sniffing allowed this script to execute!");

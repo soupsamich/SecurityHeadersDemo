@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>X-Content-Type-Options Demo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+
+    h3 {
+      color: #333;
+    }
+
+    .code-viewer {
+      background-color: #eee;
+      padding: 10px;
+      border-left: 4px solid #0078D4;
+      margin-bottom: 20px;
+      white-space: pre-wrap;
+      font-family: monospace;
+    }
+
+    .button-group {
+      margin-bottom: 20px;
+    }
+
+    .toggle-button {
+      padding: 10px 20px;
+      margin-right: 10px;
+      border: none;
+      cursor: pointer;
+      background-color: #0078D4;
+      color: white;
+      border-radius: 4px;
+    }
+
+    .toggle-button.disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+
+    .status {
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .result {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-top: 10px;
+    }
+
+    .explanation {
+      margin-top: 30px;
+      background-color: #f0f0f0;
+      padding: 15px;
+      border-left: 4px solid #0078D4;
+    }
+  </style>
+</head>
+<body>
+  <h3>🧪 MIME Sniffing Attack Simulation</h3>
+
+  <div class="code-viewer">
+    <strong>📄 Contents of malicious.txt</strong>
+<pre>
+// Attacker-controlled script
+alert("🚨 MIME sniffing allowed this script to execute!");
+</pre>
+  </div>
+
+  <div class="button-group">
+    <button id="enableBtn" class="toggle-button" onclick="setHeaderMode(true)">Enable Header</button>
+    <button id="disableBtn" class="toggle-button" onclick="setHeaderMode(false)">Disable Header</button>
+  </div>
+
+  <div class="status" id="currentMode">Current Mode: Header Disabled</div>
+
+  <button onclick="simulateUpload()">Simulate Upload</button>
+
+  <div class="result" id="resultText">No script loaded yet.</div>
+
+  <div class="explanation">
+    <h4>🔍 What’s Happening</h4>
+    <p>
+      In a real-world scenario, an attacker might upload a `.txt` file containing JavaScript to a site that allows file uploads—like a blog platform, forum, or file-sharing service.
+      If the server serves this file with <code>Content-Type: text/plain</code> but without <code>X-Content-Type-Options: nosniff</code>, the browser may sniff the content and execute it as JavaScript.
+    </p>
+    <p>
+      <strong>With the header enabled:</strong> The browser is instructed to trust the declared MIME type and not sniff. This means the script is treated as plain text and not executed.
+    </p>
+    <p>
+      <strong>Without the header:</strong> The browser may guess the content type based on the file contents and execute the script—leading to XSS or data exfiltration.
+    </p>
+  </div>
+
+  <script>
+    let nosniffEnabled = false;
+
+    function setHeaderMode(enabled) {
+      nosniffEnabled = enabled;
+
+      document.getElementById('enableBtn').classList.remove('disabled');
+      document.getElementById('disableBtn').classList.remove('disabled');
+      document.getElementById('enableBtn').disabled = false;
+      document.getElementById('disableBtn').disabled = false;
+
+      if (enabled) {
+        document.getElementById('enableBtn').classList.add('disabled');
+        document.getElementById('enableBtn').disabled = true;
+        document.getElementById('currentMode').textContent = 'Current Mode: Header Enabled (nosniff)';
+      } else {
+        document.getElementById('disableBtn').classList.add('disabled');
+        document.getElementById('disableBtn').disabled = true;
+        document.getElementById('currentMode').textContent = 'Current Mode: Header Disabled';
+      }
+
+      document.getElementById('resultText').textContent = 'No script loaded yet.';
+    }
+
+    function simulateUpload() {
+      const oldScript = document.getElementById('maliciousScript');
+      if (oldScript) oldScript.remove();
+
+      const script = document.createElement('script');
+      script.id = 'maliciousScript';
+      script.src = `malicious.txt?nosniff=${nosniffEnabled}`;
+      script.onerror = () => {
+        document.getElementById('resultText').textContent = '✅ Script blocked by nosniff header.';
+      };
+      script.onload = () => {
+        document.getElementById('resultText').textContent = '🚨 Script executed (MIME sniffing allowed).';
+      };
+      document.body.appendChild(script);
+    }
+
+    // Default mode
+    setHeaderMode(false);
+  </script>
+</body>
+</html>

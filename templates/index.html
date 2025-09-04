@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Security Headers Demo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>🛡️ Security Headers Interactive Demo</h1>
+    <div class="tabs">
+        <button class="tab-button" onclick="showTab('xcto')">X-Content-Type-Options</button>
+        <button class="tab-button" onclick="showTab('xfo')">X-Frame-Options</button>
+        <button class="tab-button" onclick="showTab('csp')">Content-Security-Policy</button>
+        <!-- Add more tabs for 
+         hsts
+         referrer policy
+         permissions policy -->
+    </div>
+
+    <div id="xcto" class="tab-content">
+        <h2>X-Content-Type-Options</h2>
+        <p><strong>Risk:</strong> MIME sniffing can lead to script execution.</p>
+        <p><strong>POC:</strong> Upload a `.txt` file with embedded JavaScript. Without the header, the browser may execute it.</p>
+        <p><strong>Mitigation:</strong> Add <code>X-Content-Type-Options: nosniff</code> to prevent MIME sniffing.</p>
+        <iframe src="/static/poc/xcto-demo.html" width="100%" height="1000"></iframe>
+    </div>
+
+    <div id="xfo" class="tab-content" style="display:none;">
+        <h2>X-Frame-Options</h2>
+        <p>Coming soon...</p>
+    </div>
+
+    <div id="csp" class="tab-content" style="display:none;">
+        <h2>Content-Security-Policy</h2>
+        <p>Coming soon...</p>
+    </div>
+
+    <script>
+        function showTab(id) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+        }
+    </script>
+</body>
+</html>
