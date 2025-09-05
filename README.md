@@ -1,2 +1,2 @@
 # SecurityHeadersDemo
-Learn the benefits of security headers and the dangerous of not properly configuring them
+Learn the benefits of security headers and the dangers of not properly configuring them
