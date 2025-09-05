@@ -703,7 +703,7 @@ function submitQuiz() {
     } else if (percentage >= 60) {
         message = '📚 Not bad! Consider reviewing the security header lessons again.';
     } else {
-        message = '🔄 You might want to go through the security header tutorials once more.';
+        message = '🔄 You still know more now than you did before you started. Review the correct answers. Then, try going through the security header tutorials once more. When you feel ready, come back and take the quiz again to see your progress!';
     }
     
     messageElement.textContent = message;
@@ -716,6 +716,14 @@ function submitQuiz() {
     // Disable form inputs
     const inputs = form.querySelectorAll('input[type="radio"]');
     inputs.forEach(input => input.disabled = true);
+
+    // Scroll to the results
+    setTimeout(() => {
+        document.getElementById('quizResults').scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center' 
+        });
+    }, 100);
 }
 
 function resetQuiz() {
