@@ -7,7 +7,7 @@ Learn the benefits of security headers and the dangers of not properly configuri
 This educational platform demonstrates how security headers protect websites from common attacks through interactive simulations. Users can experience real attack scenarios and see how each security header provides protection.
 
 # Installation:
-1. Clone the repository into your virtual host  
+1. Clone the repository to your virtual host  
 ```git clone https://github.com/soupsamich/SecurityHeadersDemo.git```
 
 2. Install dependencies  
