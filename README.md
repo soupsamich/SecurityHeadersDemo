@@ -31,7 +31,7 @@ The website should be running on your local host on port 5000
 - **Take the quiz** to test your knowledge
 - **Retake sections** as needed to reinforce learning
 
-🔍 Educational Approach
+🔍 Educational Approach  
 This project uses:  
 - **Real-world analogies** (security guards, bouncers, return addresses)
 - **Practical scenarios** (banking, healthcare, e-commerce)
