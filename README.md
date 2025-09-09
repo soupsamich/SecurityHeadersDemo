@@ -7,18 +7,18 @@ Learn the benefits of security headers and the dangers of not properly configuri
 This educational platform demonstrates how security headers protect websites from common attacks through interactive simulations. Users can experience real attack scenarios and see how each security header provides protection.
 
 # Installation:
-1. Clone the repository into your virtual host
+1. Clone the repository into your virtual host  
 ```git clone https://github.com/soupsamich/SecurityHeadersDemo.git```
 
-2. Install dependencies
-findInputs depends on the `flask` python module.
+2. Install dependencies  
+findInputs depends on the `flask` python module.  
 ```pip3 install flask```
 
-3. Run the application
+3. Run the application  
 ```python3 securityheaders.py```
 
-4. Visit through your browser
-The website should be running on your local host on port 5000
+4. Visit through your browser  
+The website should be running on your local host on port 5000  
 ```https://localhost:5000```
 
 
