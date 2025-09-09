@@ -48,7 +48,7 @@ DO NOT deploy this application to production or any public-facing environment. T
 - Do not deploy to cloud platforms, shared servers, or hosting services
 - Use only for learning security concepts in a controlled environment
 
-🎓 Educational Context
+🎓 Educational Context  
 The security vulnerabilities demonstrated in this application are intentionally simplified for educational purposes. Real-world security implementations require:  
 - Proper input validation and output encoding
 - Authentication and authorization systems
@@ -56,7 +56,7 @@ The security vulnerabilities demonstrated in this application are intentionally 
 - Regular security audits and updates
 - Following OWASP guidelines and security frameworks
 
-📚 Learning Responsibility
+📚 Learning Responsibility  
 Users are responsible for:  
 - Understanding that this is educational demonstration code
 - Not using this code as a template for production applications
