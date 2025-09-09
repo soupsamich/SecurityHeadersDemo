@@ -32,14 +32,14 @@ The website should be running on your local host on port 5000
 - **Retake sections** as needed to reinforce learning
 
 🔍 Educational Approach
-This project uses:
+This project uses:  
 - **Real-world analogies** (security guards, bouncers, return addresses)
 - **Practical scenarios** (banking, healthcare, e-commerce)
 - **Visual demonstrations** with color-coded results
 - **Good for all skill levels** from basic concepts to technical details
 
 # Disclaimer
-🚨 Please note! This is an educational tool designed to teach security concepts.
+🚨 Please note! This is an educational tool designed to teach security concepts.  
 DO NOT deploy this application to production or any public-facing environment. This code contains intentional security vulnerabilites and lacks proper security controls required for production use. This is meant to be a learning exercise only.
 
 🏠 Local Development Only
@@ -49,7 +49,7 @@ DO NOT deploy this application to production or any public-facing environment. T
 - Use only for learning security concepts in a controlled environment
 
 🎓 Educational Context
-The security vulnerabilities demonstrated in this application are intentionally simplified for educational purposes. Real-world security implementations require:
+The security vulnerabilities demonstrated in this application are intentionally simplified for educational purposes. Real-world security implementations require:  
 - Proper input validation and output encoding
 - Authentication and authorization systems
 - Secure coding practices
@@ -57,7 +57,7 @@ The security vulnerabilities demonstrated in this application are intentionally 
 - Following OWASP guidelines and security frameworks
 
 📚 Learning Responsibility
-Users are responsible for:
+Users are responsible for:  
 - Understanding that this is educational demonstration code
 - Not using this code as a template for production applications
 - Seeking proper security training for real-world development
